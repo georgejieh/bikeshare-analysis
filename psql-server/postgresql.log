@@ -4,3 +4,8 @@
 2022-04-12 22:54:54.742 PDT [4470] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5433"
 2022-04-12 22:54:54.745 PDT [4471] LOG:  database system was shut down at 2022-04-12 22:54:54 PDT
 2022-04-12 22:54:54.747 PDT [4470] LOG:  database system is ready to accept connections
+2022-04-12 23:04:21.852 PDT [4470] LOG:  received fast shutdown request
+2022-04-12 23:04:21.852 PDT [4470] LOG:  aborting any active transactions
+2022-04-12 23:04:21.853 PDT [4470] LOG:  background worker "logical replication launcher" (PID 4477) exited with exit code 1
+2022-04-12 23:04:21.853 PDT [4472] LOG:  shutting down
+2022-04-12 23:04:21.858 PDT [4470] LOG:  database system is shut down
