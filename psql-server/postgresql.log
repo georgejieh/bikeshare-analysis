@@ -11,3 +11,48 @@
 2022-04-17 20:07:48.320 PDT [7159] ERROR:  syntax error at or near "psql" at character 1
 2022-04-17 20:07:48.320 PDT [7159] STATEMENT:  psql bikeshare_analysis
 	;
+2022-04-17 20:35:50.887 PDT [7368] ERROR:  syntax error at or near "," at character 57
+2022-04-17 20:35:50.887 PDT [7368] STATEMENT:  CREATE TABLE ride_types
+		(
+			ride_id VARCHAR(16) PRIMARY,
+			rideable_type VARCHAR(13) NOT NULL,
+			member_casual VARCHAR(6) NOT NULL,
+		);
+	
+	CREATE TABLE ride_times
+		(
+			ride_id VARCHAR(16) NOT NULL,
+			started_at TIMESTAMP NOT NULL,
+			ended_at TIMESTAMP NOT NULL,
+			ride_length TIME NOT NULL,
+			day_of_week SMALLINT NOT NULL,
+			season VARCHAR(6) NOT NULL,
+			FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
+		);
+2022-04-17 20:37:59.560 PDT [7368] ERROR:  syntax error at or near ")" at character 139
+2022-04-17 20:37:59.560 PDT [7368] STATEMENT:  CREATE TABLE ride_types
+		(
+			ride_id VARCHAR(16) PRIMARY KEY,
+			rideable_type VARCHAR(13) NOT NULL,
+			member_casual VARCHAR(6) NOT NULL,
+		);
+	
+	CREATE TABLE ride_times
+		(
+			ride_id VARCHAR(16) NOT NULL,
+			started_at TIMESTAMP NOT NULL,
+			ended_at TIMESTAMP NOT NULL,
+			ride_length TIME NOT NULL,
+			day_of_week SMALLINT NOT NULL,
+			season VARCHAR(6) NOT NULL,
+			FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
+		);
+2022-04-17 20:38:37.052 PDT [7368] ERROR:  syntax error at or near ")" at character 139
+2022-04-17 20:38:37.052 PDT [7368] STATEMENT:  CREATE TABLE ride_types
+		(
+			ride_id VARCHAR(16) PRIMARY KEY,
+			rideable_type VARCHAR(13) NOT NULL,
+			member_casual VARCHAR(6) NOT NULL,
+		);
+	
+	
