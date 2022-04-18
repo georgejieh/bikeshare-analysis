@@ -1,11 +1,13 @@
-2022-04-12 22:54:54.741 PDT [4470] LOG:  starting PostgreSQL 14.2 on aarch64-apple-darwin20.6.0, compiled by Apple clang version 12.0.5 (clang-1205.0.22.9), 64-bit
-2022-04-12 22:54:54.742 PDT [4470] LOG:  listening on IPv6 address "::1", port 5433
-2022-04-12 22:54:54.742 PDT [4470] LOG:  listening on IPv4 address "127.0.0.1", port 5433
-2022-04-12 22:54:54.742 PDT [4470] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5433"
-2022-04-12 22:54:54.745 PDT [4471] LOG:  database system was shut down at 2022-04-12 22:54:54 PDT
-2022-04-12 22:54:54.747 PDT [4470] LOG:  database system is ready to accept connections
-2022-04-12 23:04:21.852 PDT [4470] LOG:  received fast shutdown request
-2022-04-12 23:04:21.852 PDT [4470] LOG:  aborting any active transactions
-2022-04-12 23:04:21.853 PDT [4470] LOG:  background worker "logical replication launcher" (PID 4477) exited with exit code 1
-2022-04-12 23:04:21.853 PDT [4472] LOG:  shutting down
-2022-04-12 23:04:21.858 PDT [4470] LOG:  database system is shut down
+2022-04-17 20:04:35.130 PDT [7097] LOG:  starting PostgreSQL 14.2 on aarch64-apple-darwin20.6.0, compiled by Apple clang version 12.0.5 (clang-1205.0.22.9), 64-bit
+2022-04-17 20:04:35.132 PDT [7097] LOG:  listening on IPv6 address "::1", port 5432
+2022-04-17 20:04:35.132 PDT [7097] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2022-04-17 20:04:35.133 PDT [7097] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2022-04-17 20:04:35.136 PDT [7098] LOG:  database system was shut down at 2022-04-17 20:04:35 PDT
+2022-04-17 20:04:35.140 PDT [7097] LOG:  database system is ready to accept connections
+2022-04-17 20:04:56.962 PDT [7116] FATAL:  database "prostgres" does not exist
+2022-04-17 20:06:23.648 PDT [7159] ERROR:  syntax error at or near "-" at character 26
+2022-04-17 20:06:23.648 PDT [7159] STATEMENT:  CREATE DATABASE bikeshare-analysis
+	;
+2022-04-17 20:07:48.320 PDT [7159] ERROR:  syntax error at or near "psql" at character 1
+2022-04-17 20:07:48.320 PDT [7159] STATEMENT:  psql bikeshare_analysis
+	;
