@@ -8,9 +8,7 @@ CREATE TABLE ride_types
 CREATE TABLE ride_times
 	(
 		ride_id VARCHAR(16) NOT NULL,
-		started_at TIMESTAMP NOT NULL,
-		ended_at TIMESTAMP NOT NULL,
-		ride_length TIME NOT NULL,
+		ride_length INTEGER NOT NULL,
 		day_of_week SMALLINT NOT NULL,
 		season VARCHAR(6) NOT NULL,
 		FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)

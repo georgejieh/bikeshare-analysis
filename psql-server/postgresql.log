@@ -56,3 +56,135 @@
 		);
 	
 	
+2022-04-17 21:59:28.181 PDT [7621] ERROR:  value too long for type character varying(16)
+2022-04-17 21:59:28.181 PDT [7621] CONTEXT:  COPY ride_types, line 1, column ride_id: "ride_id,rideable_type,member_casual"
+2022-04-17 21:59:28.181 PDT [7621] STATEMENT:  COPY ride_types FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_types.csv';
+	COPY ride_times FROM
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_times.csv';
+	
+2022-04-17 22:02:52.945 PDT [7621] ERROR:  value too long for type character varying(20)
+2022-04-17 22:02:52.945 PDT [7621] CONTEXT:  COPY ride_types, line 1, column ride_id: "ride_id,rideable_type,member_casual"
+2022-04-17 22:02:52.945 PDT [7621] STATEMENT:  COPY ride_types FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_types.csv';
+	COPY ride_times FROM
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_times.csv';
+	
+2022-04-17 22:03:38.762 PDT [7621] ERROR:  missing data for column "rideable_type"
+2022-04-17 22:03:38.762 PDT [7621] CONTEXT:  COPY ride_types, line 1: "ride_id,rideable_type,member_casual"
+2022-04-17 22:03:38.762 PDT [7621] STATEMENT:  COPY ride_types FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_types.csv';
+	COPY ride_times FROM
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_times.csv';
+	
+2022-04-17 22:06:05.554 PDT [8203] ERROR:  value too long for type character varying(6)
+2022-04-17 22:06:05.554 PDT [8203] CONTEXT:  COPY ride_types, line 1, column member_casual: "member_casual"
+2022-04-17 22:06:05.554 PDT [8203] STATEMENT:  COPY  public.ride_types ( ride_id, rideable_type, member_casual ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 22:08:01.948 PDT [7621] ERROR:  missing data for column "rideable_type"
+2022-04-17 22:08:01.948 PDT [7621] CONTEXT:  COPY ride_types, line 1: "E19E6F1B8D4C42ED,electric_bike,member"
+2022-04-17 22:08:01.948 PDT [7621] STATEMENT:  COPY ride_types FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_types.csv';
+	
+2022-04-17 22:11:41.120 PDT [8273] ERROR:  value too long for type character varying(6)
+2022-04-17 22:11:41.120 PDT [8273] CONTEXT:  COPY ride_types, line 1, column member_casual: "member_casual"
+2022-04-17 22:11:41.120 PDT [8273] STATEMENT:  COPY  public.ride_types ( ride_id, rideable_type, member_casual ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 22:13:26.538 PDT [8295] ERROR:  duplicate key value violates unique constraint "ride_types_pkey"
+2022-04-17 22:13:26.538 PDT [8295] DETAIL:  Key (ride_id)=(3.40E+15) already exists.
+2022-04-17 22:13:26.538 PDT [8295] CONTEXT:  COPY ride_types, line 32583
+2022-04-17 22:13:26.538 PDT [8295] STATEMENT:  COPY  public.ride_types ( ride_id, rideable_type, member_casual ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 22:27:24.175 PDT [8572] ERROR:  duplicate key value violates unique constraint "ride_types_pkey"
+2022-04-17 22:27:24.175 PDT [8572] DETAIL:  Key (ride_id)=(3.24E+15) already exists.
+2022-04-17 22:27:24.175 PDT [8572] CONTEXT:  COPY ride_types, line 121142
+2022-04-17 22:27:24.175 PDT [8572] STATEMENT:  COPY  public.ride_types ( ride_id, rideable_type, member_casual ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 22:34:22.911 PDT [8644] ERROR:  value too long for type character varying(6)
+2022-04-17 22:34:22.911 PDT [8644] CONTEXT:  COPY ride_types, line 1, column member_casual: "member_casual"
+2022-04-17 22:34:22.911 PDT [8644] STATEMENT:  COPY  public.ride_types ( ride_id, rideable_type, member_casual ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 22:51:09.324 PDT [8158] ERROR:  syntax error at or near "INTEGER" at character 49
+2022-04-17 22:51:09.324 PDT [8158] STATEMENT:  ALTER TABLE ride_times
+	ALTER COLUMN ride_length INTEGER;
+	
+2022-04-17 22:51:28.861 PDT [8158] ERROR:  syntax error at or near "INT" at character 49
+2022-04-17 22:51:28.861 PDT [8158] STATEMENT:  ALTER TABLE ride_times
+	ALTER COLUMN ride_length INT;
+	
+2022-04-17 22:52:25.843 PDT [8158] ERROR:  syntax error at or near "INTEGER" at character 49
+2022-04-17 22:52:25.843 PDT [8158] STATEMENT:  ALTER TABLE ride_times
+	ALTER COLUMN ride_length INTEGER;
+	
+2022-04-17 22:56:30.382 PDT [8991] ERROR:  value too long for type character varying(16)
+2022-04-17 22:56:30.382 PDT [8991] CONTEXT:  COPY ride_times, line 1, column ride_id: "﻿E19E6F1B8D4C42ED"
+2022-04-17 22:56:30.382 PDT [8991] STATEMENT:  COPY  public.ride_times ( ride_id, started_at, ended_at, ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:02:12.571 PDT [9041] ERROR:  value too long for type character varying(16)
+2022-04-17 23:02:12.571 PDT [9041] CONTEXT:  COPY ride_times, line 1, column ride_id: "﻿E19E6F1B8D4C42ED"
+2022-04-17 23:02:12.571 PDT [9041] STATEMENT:  COPY  public.ride_times ( ride_id, started_at, ended_at, ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:04:18.814 PDT [9075] ERROR:  invalid input syntax for type integer: "#NUM!"
+2022-04-17 23:04:18.814 PDT [9075] CONTEXT:  COPY ride_times, line 6586, column ride_length: "#NUM!"
+2022-04-17 23:04:18.814 PDT [9075] STATEMENT:  COPY  public.ride_times ( ride_id, started_at, ended_at, ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:08:46.018 PDT [9120] ERROR:  insert or update on table "ride_times" violates foreign key constraint "ride_times_ride_id_fkey"
+2022-04-17 23:08:46.018 PDT [9120] DETAIL:  Key (ride_id)=(﻿E19E6F1B8D4C42ED) is not present in table "ride_types".
+2022-04-17 23:08:46.018 PDT [9120] STATEMENT:  COPY  public.ride_times ( ride_id, started_at, ended_at, ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:12:03.562 PDT [9161] ERROR:  value too long for type character varying(16)
+2022-04-17 23:12:03.562 PDT [9161] CONTEXT:  COPY ride_times, line 1, column ride_id: "﻿E19E6F1B8D4C42ED"
+2022-04-17 23:12:03.562 PDT [9161] STATEMENT:  COPY  public.ride_times ( ride_id, started_at, ended_at, ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:13:53.089 PDT [9182] ERROR:  invalid input syntax for type timestamp: "﻿1/23/21 16:14"
+2022-04-17 23:13:53.089 PDT [9182] CONTEXT:  COPY ride_times, line 1, column started_at: "﻿1/23/21 16:14"
+2022-04-17 23:13:53.089 PDT [9182] STATEMENT:  COPY  public.ride_times ( started_at, ended_at, ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:20:46.765 PDT [9248] ERROR:  invalid input syntax for type timestamp: "﻿2021-01-23 16:14:19"
+2022-04-17 23:20:46.765 PDT [9248] CONTEXT:  COPY ride_times, line 1, column started_at: "﻿2021-01-23 16:14:19"
+2022-04-17 23:20:46.765 PDT [9248] STATEMENT:  COPY  public.ride_times ( started_at, ended_at, ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:21:20.354 PDT [8158] ERROR:  syntax error at or near "TIMESTAMP" at character 1
+2022-04-17 23:21:20.354 PDT [8158] STATEMENT:  TIMESTAMP
+2022-04-17 23:21:29.316 PDT [8158] ERROR:  syntax error at or near "NOW" at character 1
+2022-04-17 23:21:29.316 PDT [8158] STATEMENT:  NOW()
+2022-04-17 23:33:42.993 PDT [9478] ERROR:  invalid input syntax for type timestamp: "﻿23/01/2021 16:14:19"
+2022-04-17 23:33:42.993 PDT [9478] CONTEXT:  COPY ride_times, line 1, column started_at: "﻿23/01/2021 16:14:19"
+2022-04-17 23:33:42.993 PDT [9478] STATEMENT:  COPY  public.ride_times ( started_at, ended_at, ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:38:20.650 PDT [9519] ERROR:  invalid input syntax for type integer: "﻿625"
+2022-04-17 23:38:20.650 PDT [9519] CONTEXT:  COPY ride_times, line 1, column ride_length: "﻿625"
+2022-04-17 23:38:20.650 PDT [9519] STATEMENT:  COPY  public.ride_times ( ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:39:24.216 PDT [9532] ERROR:  invalid input syntax for type integer: "﻿625"
+2022-04-17 23:39:24.216 PDT [9532] CONTEXT:  COPY ride_times, line 1, column ride_length: "﻿625"
+2022-04-17 23:39:24.216 PDT [9532] STATEMENT:  COPY  public.ride_times ( ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:41:25.378 PDT [9548] ERROR:  value too long for type character varying(16)
+2022-04-17 23:41:25.378 PDT [9548] CONTEXT:  COPY ride_times, line 1, column ride_id: "﻿E19E6F1B8D4C42ED"
+2022-04-17 23:41:25.378 PDT [9548] STATEMENT:  COPY  public.ride_times ( ride_id, ride_length, day_of_week, season ) FROM STDIN   CSV   QUOTE '"' ESCAPE '''';
+2022-04-17 23:44:26.724 PDT [8158] ERROR:  insert or update on table "ride_times" violates foreign key constraint "ride_times_ride_id_fkey"
+2022-04-17 23:44:26.724 PDT [8158] DETAIL:  Key (ride_id)=(5.30E+15) is not present in table "ride_types".
+2022-04-17 23:44:26.724 PDT [8158] STATEMENT:  COPY ride_times FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_times.csv' CSV HEADER;
+2022-04-17 23:45:53.218 PDT [8158] ERROR:  invalid input syntax for type smallint: "Winter"
+2022-04-17 23:45:53.218 PDT [8158] CONTEXT:  COPY ride_times, line 2, column day_of_week: "Winter"
+2022-04-17 23:45:53.218 PDT [8158] STATEMENT:  COPY ride_times FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_times.csv' CSV HEADER;
+2022-04-17 23:46:24.553 PDT [8158] ERROR:  invalid input syntax for type smallint: "Winter"
+2022-04-17 23:46:24.553 PDT [8158] CONTEXT:  COPY ride_times, line 2, column day_of_week: "Winter"
+2022-04-17 23:46:24.553 PDT [8158] STATEMENT:  COPY ride_times FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_times.csv' CSV HEADER;
+2022-04-17 23:46:31.706 PDT [8158] ERROR:  insert or update on table "ride_times" violates foreign key constraint "ride_times_ride_id_fkey"
+2022-04-17 23:46:31.706 PDT [8158] DETAIL:  Key (ride_id)=(5.30E+15) is not present in table "ride_types".
+2022-04-17 23:46:31.706 PDT [8158] STATEMENT:  COPY ride_times FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_times.csv' CSV HEADER;
+2022-04-17 23:49:42.784 PDT [7621] ERROR:  cannot drop table ride_types because other objects depend on it
+2022-04-17 23:49:42.784 PDT [7621] DETAIL:  constraint ride_times_ride_id_fkey on table ride_times depends on table ride_types
+2022-04-17 23:49:42.784 PDT [7621] HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2022-04-17 23:49:42.784 PDT [7621] STATEMENT:  DROP TABLE ride_types
+	
+2022-04-17 23:52:15.472 PDT [8158] ERROR:  duplicate key value violates unique constraint "ride_types_pkey"
+2022-04-17 23:52:15.472 PDT [8158] DETAIL:  Key (ride_id)=(3.40E+15) already exists.
+2022-04-17 23:52:15.472 PDT [8158] CONTEXT:  COPY ride_types, line 32576
+2022-04-17 23:52:15.472 PDT [8158] STATEMENT:  COPY ride_types FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_types.csv' CSV HEADER;
+	
+	COPY ride_times FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_times.csv' CSV HEADER;
+2022-04-17 23:53:57.710 PDT [7621] ERROR:  duplicate key value violates unique constraint "ride_types_pkey"
+2022-04-17 23:53:57.710 PDT [7621] DETAIL:  Key (ride_id)=(3.40E+15) already exists.
+2022-04-17 23:53:57.710 PDT [7621] CONTEXT:  COPY ride_types, line 32576
+2022-04-17 23:53:57.710 PDT [7621] STATEMENT:  COPY ride_types FROM 
+	'/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-sql-import/ride_types.csv' CSV HEADER;
+	
+2022-04-18 00:14:01.820 PDT [7097] LOG:  received fast shutdown request
+2022-04-18 00:14:01.821 PDT [7097] LOG:  aborting any active transactions
+2022-04-18 00:14:01.822 PDT [7097] LOG:  background worker "logical replication launcher" (PID 7104) exited with exit code 1
+2022-04-18 00:14:01.840 PDT [7099] LOG:  shutting down
+2022-04-18 00:14:01.851 PDT [7097] LOG:  database system is shut down
