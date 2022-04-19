@@ -11,5 +11,6 @@ CREATE TABLE ride_times
 		ride_length INTEGER NOT NULL,
 		day_of_week SMALLINT NOT NULL,
 		season VARCHAR(6) NOT NULL,
+		month_of_year SMALLINT NOT NULL,
 		FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
 	);

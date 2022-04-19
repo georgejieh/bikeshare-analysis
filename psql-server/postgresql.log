@@ -188,3 +188,62 @@
 2022-04-18 00:14:01.822 PDT [7097] LOG:  background worker "logical replication launcher" (PID 7104) exited with exit code 1
 2022-04-18 00:14:01.840 PDT [7099] LOG:  shutting down
 2022-04-18 00:14:01.851 PDT [7097] LOG:  database system is shut down
+2022-04-18 19:22:50.007 PDT [13162] LOG:  starting PostgreSQL 14.2 on aarch64-apple-darwin20.6.0, compiled by Apple clang version 12.0.5 (clang-1205.0.22.9), 64-bit
+2022-04-18 19:22:50.008 PDT [13162] LOG:  listening on IPv6 address "::1", port 5432
+2022-04-18 19:22:50.008 PDT [13162] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2022-04-18 19:22:50.009 PDT [13162] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2022-04-18 19:22:50.012 PDT [13163] LOG:  database system was shut down at 2022-04-18 00:14:01 PDT
+2022-04-18 19:22:50.017 PDT [13162] LOG:  database system is ready to accept connections
+2022-04-18 19:55:57.145 PDT [13670] ERROR:  relation "ride_length" does not exist at character 90
+2022-04-18 19:55:57.145 PDT [13670] STATEMENT:  SELECT ride_length 
+	FROM ride_times 
+	ORDER BY ride_length
+	OFFSET (
+		SELECT COUNT(*) FROM ride_length)/2
+	LIMIT 1;
+2022-04-18 20:16:21.037 PDT [13670] ERROR:  syntax error at or near "FROM" at character 202
+2022-04-18 20:16:21.037 PDT [13670] STATEMENT:  SELECT rideable_type, 
+		SUM(CASE WHEN member_casual = 'member' then 1 ELSE NULL END) as number_of_member_rides,
+		SUM(CASE WHEN member_casual = 'casual' then 1 ELSE NULL END) as number_of_member_rides,
+	FROM ride_types
+	GROUP BY rideable_type;
+2022-04-18 20:23:52.385 PDT [13670] ERROR:  column "t.member_casual" must appear in the GROUP BY clause or be used in an aggregate function at character 8
+2022-04-18 20:23:52.385 PDT [13670] STATEMENT:  SELECT t.member_casual, AVG(ti.ride_length) as avg_ride_length
+	FROM ride_types t
+	JOIN ride_times ti ON t.ride_id = ti.ride_id
+	GROUP BY ti.day_of_week;
+2022-04-18 20:27:39.934 PDT [13670] ERROR:  column ti.rideable_type does not exist at character 153
+2022-04-18 20:27:39.934 PDT [13670] HINT:  Perhaps you meant to reference the column "t.rideable_type".
+2022-04-18 20:27:39.934 PDT [13670] STATEMENT:  SELECT t.rideable_type, t.member_casual, AVG(ti.ride_length) as avg_ride_length
+	FROM ride_types t
+	JOIN ride_times ti ON t.ride_id = ti.ride_id
+	GROUP BY ti.rideable_type, t.member_casual;
+2022-04-18 20:36:15.283 PDT [13988] ERROR:  function array_append(anyarray, anyelement) does not exist
+2022-04-18 20:36:15.283 PDT [13988] STATEMENT:  -- create median function
+	CREATE FUNCTION _final_median(anyarray) RETURNS float8 AS $$ 
+	  WITH q AS
+	  (
+	     SELECT val
+	     FROM unnest($1) val
+	     WHERE VAL IS NOT NULL
+	     ORDER BY 1
+	  ),
+	  cnt AS
+	  (
+	    SELECT COUNT(*) as c FROM q
+	  )
+	  SELECT AVG(val)::float8
+	  FROM 
+	  (
+	    SELECT val FROM q
+	    LIMIT  2 - MOD((SELECT c FROM cnt), 2)
+	    OFFSET GREATEST(CEIL((SELECT c FROM cnt) / 2.0) - 1,0)  
+	  ) q2;
+	$$ LANGUAGE sql IMMUTABLE;
+	
+	CREATE AGGREGATE median(anyelement) (
+	  SFUNC=array_append,
+	  STYPE=anyarray,
+	  FINALFUNC=_final_median,
+	  INITCOND='{}'
+	);
