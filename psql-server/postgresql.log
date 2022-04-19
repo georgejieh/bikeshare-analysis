@@ -247,3 +247,8 @@
 	  FINALFUNC=_final_median,
 	  INITCOND='{}'
 	);
+2022-04-18 20:51:11.811 PDT [13162] LOG:  received fast shutdown request
+2022-04-18 20:51:11.811 PDT [13162] LOG:  aborting any active transactions
+2022-04-18 20:51:11.812 PDT [13162] LOG:  background worker "logical replication launcher" (PID 13169) exited with exit code 1
+2022-04-18 20:51:11.812 PDT [13164] LOG:  shutting down
+2022-04-18 20:51:11.820 PDT [13162] LOG:  database system is shut down
