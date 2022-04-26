@@ -7,3 +7,12 @@ data3 <- merge(data1, data2, by.x = "ride_id", by.y = "ride_id")
 head(data3)
 str(data3)
 summary(data3)
+
+#delete useless data
+data3$ride_id <- NULL
+
+# install and activate ggplot2
+install.packages("ggplot2")
+library(ggplot2)
+
+
