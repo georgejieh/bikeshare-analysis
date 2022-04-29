@@ -1,3 +1,11 @@
+# install and activate necessary packages
+install.packages(c("readr", "dplyr", "tidyr", "ggplot2", "stringr"))
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(stringr)
+
 # import data
 setwd("/Users/nancy/Documents/Git Repo/Google Case Studies/bikeshare-analysis/processed-data/csv-files-for-import")
 getwd()
@@ -22,22 +30,39 @@ levels(data$day_of_week) <- c("Sun", "Mon", "Tue", "Wed",
 levels(data$month_of_year) <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
-# install and activate ggplot2
-install.packages("ggplot2")
-library(ggplot2)
+# convert ride times to minutes
+data$ride_length <- data$ride_length/60
 
-# bar charts
-bar_base <- ggplot(data=data, aes(x=member_casual))
-geom_bar_base <- geom_bar(stat="count", colour="black", aes(fill=category))
+# box plots
+boxplot_base <- ggplot(data=data, aes(y=ride_length, 
+                                      colour=member_casual))
 
-category <- data$season
-bar_base + geom_bar_base
+boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=season)) + 
+  coord_cartesian(ylim=c(0,85))
 
-category <- data$day_of_week
-bar_base + geom_bar_base
+boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=day_of_week)) + 
+  coord_cartesian(ylim=c(0,85))
 
-category <- data$rideable_type
-bar_base + geom_bar_base
+boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=month_of_year)) + 
+  coord_cartesian(ylim=c(0,100))
 
-category <- data$month_of_year
-bar_base + geom_bar_base
+boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=rideable_type)) + 
+  coord_cartesian(ylim=c(0,115))
+
+# histograms
+histogram_base <- ggplot(data=data, aes(x=ride_length, fill=member_casual))
+
+histogram_base + geom_histogram(binwidth=2, colour="white", alpha=0.65) + 
+  geom_freqpoly(binwidth=2, aes(colour=rideable_type)) +
+  facet_grid(month_of_year~member_casual) +
+  coord_cartesian(xlim=c(0,35))
+ 
+histogram_base + geom_histogram(binwidth=2, colour="white", alpha=0.65) + 
+  geom_freqpoly(binwidth=2, aes(colour=rideable_type)) +
+  facet_grid(season~member_casual) +
+  coord_cartesian(xlim=c(0,40))
+
+histogram_base + geom_histogram(binwidth=2, colour="white", alpha=0.65) + 
+  geom_freqpoly(binwidth=2, aes(colour=rideable_type)) +
+  facet_grid(day_of_week~member_casual) +
+  coord_cartesian(xlim=c(0,35))
