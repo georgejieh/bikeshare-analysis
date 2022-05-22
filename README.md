@@ -1,6 +1,6 @@
 # Google Data Analytics Case Study 1: How Does a Bike-Share Navigate Speedy Success?
 
-![alt text] (https://imgur.com/trZS04H "Cyclistic")
+![alt text](https://imgur.com/trZS04H)
 
 ## Introduction
 
