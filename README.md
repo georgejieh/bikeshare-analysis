@@ -2,7 +2,7 @@
 
 ![alt text](https://i.imgur.com/trZS04H.png)
 
-[toc]
+
 
 ## Introduction
 
