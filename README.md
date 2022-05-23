@@ -99,9 +99,15 @@ The return type that makes the most sense for our puposes is type 1, which is al
 
 To calculate distance travled, we will need to calculate the distanace between two longitude and latitude coordinates. For us to do so the Haversine formula would be needed. The Haversine formula is as follows:
 
-\begin{equation}Distance = R \times arccos[(sin\varphi_1 \times sin\varphi_2) + cos\varphi_1 \times cos\varphi_2\times cos\Delta\lambda] \end{equation}
+
+$$
+Distance = R \times arccos[(sin\varphi_1 \times sin\varphi_2) + cos\varphi_1 \times cos\varphi_2\times cos\Delta\lambda]
+$$
+
 
 φ is value of latitude in radians, λ is value of longtitude in radians, and R is earth's radius, which is approximately 3963 kilometers or 6377.83 miles. To calculate radians, the equation would be:
+
+
 $$
 \phi = \frac{latitude}{(180/\pi)}
 $$
@@ -109,7 +115,6 @@ $$
 $$
 \lambda = \frac{longitude}{(180/\pi)}
 $$
-
 Since we are using Excel, we can easily calculate radians with the function RADIANS(). So the full Haversine formula in Excel format with the result in miles will be the following:
 
 ```Excel
