@@ -98,9 +98,9 @@ The return type that makes the most sense for our puposes is type 1, which is al
 ###### Distance Traveled Calculation
 
 To calculate distance travled, we will need to calculate the distanace between two longitude and latitude coordinates. For us to do so the Haversine formula would be needed. The Haversine formula is as follows:
-$$
-Distance = R \times arccos[(sin\varphi_1 \times sin\varphi_2) + cos\varphi_1 \times cos\varphi_2\times cos\Delta\lambda]
-$$
+
+\begin{equation}Distance = R \times arccos[(sin\varphi_1 \times sin\varphi_2) + cos\varphi_1 \times cos\varphi_2\times cos\Delta\lambda] \end{equation}
+
 φ is value of latitude in radians, λ is value of longtitude in radians, and R is earth's radius, which is approximately 3963 kilometers or 6377.83 miles. To calculate radians, the equation would be:
 $$
 \phi = \frac{latitude}{(180/\pi)}
