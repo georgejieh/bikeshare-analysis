@@ -105,16 +105,22 @@ Distance = R \times arccos[(sin\varphi_1 \times sin\varphi_2) + cos\varphi_1 \ti
 $$
 
 
-φ is value of latitude in radians, λ is value of longtitude in radians, and R is earth's radius, which is approximately 3963 kilometers or 6377.83 miles. To calculate radians, the equation would be:
+φ is value of latitude in radians, λ is value of longtitude in radians, and R is earth's radius, which is approximately 3963 kilometers or 6377.83 miles. To calculate radians, the equation for latitude would be:
 
 
 $$
 \phi = \frac{latitude}{(180/\pi)}
 $$
 
+
+While the equation for longitude would be:
+
+
 $$
 \lambda = \frac{longitude}{(180/\pi)}
 $$
+
+
 Since we are using Excel, we can easily calculate radians with the function RADIANS(). So the full Haversine formula in Excel format with the result in miles will be the following:
 
 ```Excel
