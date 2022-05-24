@@ -134,3 +134,71 @@ An example of this equation used for row 2, the equation would be written as:
 ```
 
 After using this calculation we've realized it creates a few #NUM! errors. These errors are created when the bike was borrowed at and returned to the same exact location. This cause us to realize calculating distance won't be much of an insight because borrow and return locations have no direct correlation with how far the user actually rode. Since users will return the bike to the nearest station to where they end their trip. If the trip was a round trip, it would be parked close to the borrowed location. Ultimately this resulted in these calculations to be omitted and longitude and latitude data deleted during the cleaning process. 
+
+## Analyze Phase
+
+For the analyze step we decided to use Excel, SQL, and R. Each tool have it's strength and weaknesses, so we believed all three together will provide more insights into the data than just using any one of them.
+
+#### Excel Analysis
+
+To begin the process for Excel analysis we first need to combine all 12 XLS files into 1 XLSX file. We've created the XLSX file in the directory /processed-data/ and named it consolidated-processed-data. With the data merged, we prepared more calculations in preperation for pivot tables. 
+
+###### Additional Calculations
+
+One of the first calculation we did was to extract seasons from time stamp. By being able to group the data as season we can see trip trends across each season and determine if change in weather changes anything about user habits. To extract season information the following equation was used:
+
+```Excel
+=LOOKUP(MONTH([started_at]),{1,2,5,8,11;"Winter","Spring","Summer","Autumn","Winter"})
+```
+
+The equation extracts the month from started_at time stamp, and if the value is 11, 12, or 1 then it return the result Winter. If its between 2 to 5, then its Spring and so on. 
+
+The next calculation was to extracting month from time stamp. All we need to do for this was to use the MONTH() function. 
+
+The last set of calculation was all logical formulas. We want each trip to return a certain binary result based on a certain criteria. For example, if we want the data to return 1 if the bike trip was taken by an annual member and 0 if it wasn't, then we may use this equation:
+
+```Excel
+=IF([member_casual]="member",1,0)
+```
+
+The reason why we need the binary results is due to pivot tables later on. In pivot tables there isn't an option for you to count the number of a certain value out of a column that have multiple different values. For example, you cannot tell a pivot table to count the number of members in a column that have both members and casuals. However if you have a separate columns that returns 1 as a result for the trip being an annual membership trip, you can use sum to add up all the member trips.
+
+###### Descriptive Analysis
+
+For better organization, a new sheet named descriptive_analysis was created. In here we found out the following:
+
+| Description                                | Value                                     |
+| ------------------------------------------ | ----------------------------------------- |
+| Average Ride Length                        | 22 Minutes and 23 Seconds                 |
+| Longest Ride Length                        | 33 Days 4 Hours 16 Minutes and 42 Seconds |
+| Median Ride Length                         | 11 Minutes and 34 Seconds                 |
+| Day of the Week With Most Rides            | Saturday                                  |
+| Percentage of Trips Made By Annual Members | 52.51%                                    |
+| Percentage of Trips Made By Casual Riders  | 47.49%                                    |
+| Preferred Bike Type by Annual Members      | Classic Bikes                             |
+| Preferred Bike Type of Casual Riders       | Electric Bikes                            |
+
+From the descriptive analysis we learned the following:
+
+- Casual Riders and Annual Members rides very differently, with each have preferences over different bike types due to differences in usage purposes.
+- Distribution of bike trips sways towards the weekends, which is in line with the expectation that the company have regarding 30% of trips being commutes while the rest being used for casual rides.
+- The preference of Classic Bikes for Annual Members seems to indicate Annual Members uses the bikes for commute more often since Classic Bikes are lighter than Electric bikes, but the Annual Member versus Casual Member percentage trip distribution seems to go against the 30% : 70% ratio presented by the company.
+- Majority of rides seems to be on the shorter end between 11 to 22 minutes.
+- There are a few outliers where the ride length spans multiple days.
+
+###### Pivot Tables
+
+The next step of the analysis is to use pivot tables. In pivot tables we experimented with the data is various areas to look for patterns. 
+
+Below are a few pivot tables that were generated:
+
+![img](https://i.imgur.com/fDm7D4Y.png)
+
+![img](https://i.imgur.com/KbNM9m7.png)
+
+![img](https://i.imgur.com/11EtHJR.png)
+
+![img](https://i.imgur.com/QloHCCb.png)
+
+![img](https://i.imgur.com/A483Am0.png)
+
