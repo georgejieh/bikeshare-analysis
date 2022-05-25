@@ -202,3 +202,22 @@ Below are a few pivot tables that were generated:
 
 ![img](https://i.imgur.com/A483Am0.png)
 
+From the pivogt table we learn the following:
+
+- The 33 Days + trip was taken by a casual rider during Spring of April on a docked bike. 
+- Annual members on average takes shorter rides than casual riders, but at a slightly higher frequency.
+- Annual members do not use docked bikes at all and most really long trips are docked bikes.
+- If rows with problematic data were not deleted, the number of rides each month would be exactly the same, so we cannot determine which months or seasons people ride more often.
+- We see a spike in trips on Fridays through Sundays. There is a dip in trip on Monday. While the number of trips between Tuesday through Thursday are fairly constant.
+- With annual members, trip frequency from Tuesday through Saturday is fairly constant, while there is a dip on Sunday and Monday. 
+- With casual riders the trip frequency between Monday to Thursday is fairly constant with a spike starting on Friday till Sunday.
+- With the aforementioned patterns, most casual riders riding between Monday through Thursday could be riding for the same reasons as annual members between Tuesday through Thursday. They are possible targets for marketing.
+- People tend to ride longer during spring and summer. Possibly due to nicer weather. While much shorter during winter. Keep in mind these trips takes place around Chicago area where winter can get as cold as 27 degrees Fahrenheit, while summers rarely get hotter than 82 degrees Fahrenheit.
+
+### pSQL Analysis
+
+To be able to drill into more details into the data that pivot tables can't accomplish, such as finding average annual member ride length per season, we've decided to use SQL for analysis as well. Out of all the SQL option, pSQL was chosen due to accessibility. 
+
+###### pSQL Database Schema and Data Import
+
+To keep each table from being too wide, the combined data was divided into three tables. One specifically for ride 
