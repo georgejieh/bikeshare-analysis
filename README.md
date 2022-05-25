@@ -202,7 +202,7 @@ Below are a few pivot tables that were generated:
 
 ![img](https://i.imgur.com/A483Am0.png)
 
-From the pivogt table we learn the following:
+From the pivot table we learn the following:
 
 - The 33 Days + trip was taken by a casual rider during Spring of April on a docked bike. 
 - Annual members on average takes shorter rides than casual riders, but at a slightly higher frequency.
@@ -220,4 +220,177 @@ To be able to drill into more details into the data that pivot tables can't acco
 
 ###### pSQL Database Schema and Data Import
 
-To keep each table from being too wide, the combined data was divided into three tables. One specifically for ride 
+To keep each table from being too wide, the combined data was divided into three tables. One specifically for different types of bikes, one for calculated time related trip data, and one specficially for ride dates. All three tables are joined to ride_type table's ride_id as primary key. The query is as follows:
+
+```sql
+CREATE TABLE ride_types
+	(
+		ride_id VARCHAR(16) PRIMARY KEY,
+		rideable_type VARCHAR(13) NOT NULL,
+		member_casual VARCHAR(6) NOT NULL
+	);
+
+CREATE TABLE ride_times
+	(
+		ride_id VARCHAR(16) NOT NULL,
+		ride_length INTEGER NOT NULL,
+		day_of_week SMALLINT NOT NULL,
+		season VARCHAR(6) NOT NULL,
+		month_of_year SMALLINT NOT NULL,
+		FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
+	);
+
+CREATE TABLE ride_dates
+	(
+		ride_id VARCHAR(16) NOT NULL,
+		started_at TIMESTAMP NOT NULL,
+		ended_at TIMESTAMP NOT NULL,
+		FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
+	);
+```
+
+We then created CSV files that corresponds to the schema with data extracted from cibsikudated-processed-data.xlsx and placed it in the /processed-data/csv-files-for-import/ directory. Each CSV file was named based on their corresponding database table name. pSQL cannot properly interpret time length in HH:MM:SS format, so ride length data was all converted into seconds. Once everything is ready, the CSV files were imported into the database through the following query:
+
+```sql
+COPY ride_types FROM 
+'.../bikeshare-analysis/processed-data/csv-files-for-import/ride_types.csv' CSV HEADER;
+
+COPY ride_times FROM 
+'.../bikeshare-analysis/processed-data/csv-files-for-import/ride_times.csv' CSV HEADER;
+
+COPY ride_dates FROM 
+'.../bikeshare-analysis/processed-data/csv-files-for-import/ride_dates.csv' CSV HEADER;
+```
+
+The above file paths were redacted to only show folders that are relavent to this case study.
+
+###### Summary Statistics and Basic Analysis
+
+Starting off, to confirm all data is imported correctly I queried some basic statistics regarding the data that I've previously already gotten the answers for. Such as median ride length, average ride length, total amount of trips, and max ride length. 
+
+pSQL does not have a function to calculate median, so I had to create a custom median function with the following query:
+
+```sql
+CREATE OR REPLACE FUNCTION _final_median(numeric[])
+   RETURNS numeric AS
+$$
+   SELECT AVG(val)
+   FROM (
+     SELECT val
+     FROM unnest($1) val
+     ORDER BY 1
+     LIMIT  2 - MOD(array_upper($1, 1), 2)
+     OFFSET CEIL(array_upper($1, 1) / 2.0) - 1
+   ) sub;
+$$
+LANGUAGE 'sql' IMMUTABLE;
+
+CREATE AGGREGATE median(numeric) (
+  SFUNC=array_append,
+  STYPE=numeric[],
+  FINALFUNC=_final_median,
+  INITCOND='{}'
+);
+```
+
+The query used for the aforementioned basic statistics were as follows:
+
+```sql
+-- number of total trips
+SELECT COUNT(*) AS total_amount_of_rides FROM ride_types;
+
+-- mode of day of the week
+SELECT MODE() WITHIN GROUP (ORDER BY day_of_week) AS mode_of_day_of_week FROM ride_times;
+
+-- median ride length in seconds
+SELECT median(ride_length) AS median_ride_length
+FROM ride_times;
+
+-- average ride length in seconds
+SELECT AVG(ride_length) as avg_ride_length FROM ride_times;
+
+-- max ride length in seconds
+SELECT ride_length AS max_ride_length
+FROM ride_times
+ORDER BY ride_length DESC
+LIMIT 1;
+```
+
+Their outputs were as follows:
+
+| Statistics              | Results                                                      |
+| ----------------------- | ------------------------------------------------------------ |
+| Total Number of Trips   | 196465 trips                                                 |
+| Mode of Day of the Week | 6 or Saturday                                                |
+| Median Ride Length      | 694 seconds or 11 minutes and 34 seconds                     |
+| Average Ride Length     | Approximately 1343 seconds or 22 minutes and 23 seconds      |
+| Max Ride Length         | 2866602 seconds or 33 days 4 hours 16 minutes and 42 seconds |
+
+All outputs matches up with the results provided by Excel, so it is safe to say all data got imported correctly.
+
+We then continue with queries that we weren't able to easily with pivot tables on Excel. The query below shows the average, maximum, and median ride length of annual members and casual riders per day of the week.
+
+```sql
+SELECT ti.day_of_week, t.member_casual, 
+	AVG(ti.ride_length) as avg_ride_length,
+	median(ti.ride_length) as median_ride_length,
+	MAX(ti.ride_length) as maximum_ride_length
+FROM ride_types t
+JOIN ride_times ti ON t.ride_id = ti.ride_id
+GROUP BY ti.day_of_week, t.member_casual
+ORDER BY ti.day_of_week, t.member_casual;
+```
+
+The query results pulls up the following table. The actual table generated is different from the table shown here, but the statistical results are the same. To have the query show exactly what the table below shows the query would need to be changed by removing t.member_casual from select and GROUP BY. The contents within AVG(), MAX(), and median() functions would also need to be changed to be member and casual specific with the use of subqueries. Though these changes would create a easier to read table, but would be bulkier and less efficient.
+
+| Day of the Week | Average Member Ride Length | Average Casual Ride Length | Median Member Ride Length | Median Casual Ride Length | Max Member Ride Length | Max Casual Ride Length |
+| --------------- | -------------------------- | -------------------------- | ------------------------- | ------------------------- | ---------------------- | ---------------------- |
+| Sunday          | 948 Seconds                | 2374 Seconds               | 621 Seconds               | 1047 Seconds              | 89995 Seconds          | 2137331 Seonds         |
+| Monday          | 865 Seconds                | 1717 Seconds               | 558 Seconds               | 893 Seconds               | 89995 Seconds          | 444809 Seconds         |
+| Tuesday         | 802 Seconds                | 1608 Seconds               | 546 Seconds               | 835 Seconds               | 89993 Seconds          | 372832 Seconds         |
+| Wednesday       | 800 Seconds                | 1585 Seconds               | 554 Seconds               | 794 Seconds               | 89990 Seconds          | 975130 Seconds         |
+| Thursday        | 785 Seconds                | 1720 Seconds               | 538 Seconds               | 782 Seconds               | 89996 Seconds          | 2498731 Seconds        |
+| Friday          | 817 Seconds                | 1977 Seconds               | 553 Seconds               | 824 Seconds               | 89996 Seconds          | 2866602 Seconds        |
+| Saturday        | 928 Seconds                | 1975 Seconds               | 651 Seconds               | 1015 Seconds              | 89994 Seconds          | 412689 Seconds         |
+
+From these results we've learned the following:
+
+- The average and median member ride length is all within 1 minute margin of each other during weekdays and only increase on weekends.
+- The average and median casual ride lengths decreases while coming out of weekend and increases while going into weekends.
+- Maximum member ride length will never go over 24 hours while the maximum casual ride lengths is at least 4 days long. 
+- These numbers further emphasize that annual members ride these bikes to do things that they consistently do on a regular basis, which results in the more consistent numbers throughout the week, while casual riders are more sporatic, which results in inconsistent numbers. From this we can infer that annual members ride more for commute purposes while casual riders ride more for leisure.
+
+Another interesting query is looking at average ride length per membership type per bike type. The query for that is as follows:
+
+```sql
+SELECT t.rideable_type, t.member_casual, 
+	AVG(ti.ride_length) as avg_ride_length
+FROM ride_types t
+JOIN ride_times ti ON t.ride_id = ti.ride_id
+GROUP BY t.rideable_type, t.member_casual
+ORDER BY t.rideable_type, t.member_casual;
+```
+
+The results are shown below. Like before the table here was edited to make it easier to read, actual query data output table doesn't look like this.
+
+| Bike Type | Average Member Ride Length | Average Casual Ride Length |
+| --------- | -------------------------- | -------------------------- |
+| Classic   | 894 Seonds                 | 2088 Seconds               |
+| Docked    | 0 Seconds                  | 6040 Seconds               |
+| Electric  | 747 Seconds                | 1161 Seconds               |
+
+From these reults we've learned the following:
+
+- Like with all our results before we can tell that casual riders on average rides longer than annual members, where members ride on average 12 to 15 minutes, while casual riders ride on average 20 to 35 minutes when not including docked bikes. 
+- Another pattern we see is that classic bikes tends to be longer rides than electric bikes. This makes sense for annual members since most of their rides are for commutes. A electric bike is faster than a normal bike, so when traveling the same distance it would take less time. The same phenomenon appearing for casual riders means that there are enough commute like trips for a statistial trend to appear.
+
+### Conclusions
+
+From the analysis shown in both SQL and Excel we can see the following:
+
+- Annual members ride at a more consistent frequency and ride length than casual riders during the weekdays.
+- Both annual members and casual riders see a spike in frequency and ride length on weekends.
+- Annual members never rider over 24 hours suggests when they ride for leisure it is mostly only used for day trips, while casual riders booking a bike for multiple days at a time suggests that they are occassionally use it for vacations in the Chicago area. 
+- Only casual riders use docked bikes, but their bike preference is electric bikes, while annual members prefer casual bikes.
+- Electric bike trips tends to be shorter across the board. It is suggested that is due to them being faster, but when looking at bike pricing from the data source, Lyft Bikes, this could also be due to electric bikes being more expensive to rent.
+- The 30% commute and 70% leisure rides proposed by the company seems to be refuted by the data. The statistical patterns seems to suggest the distribution is closer to 50:50. 
