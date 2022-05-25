@@ -14,3 +14,11 @@ CREATE TABLE ride_times
 		month_of_year SMALLINT NOT NULL,
 		FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
 	);
+
+CREATE TABLE ride_dates
+	(
+		ride_id VARCHAR(16) NOT NULL,
+		started_at TIMESTAMP NOT NULL,
+		ended_at TIMESTAMP NOT NULL,
+		FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
+	);
