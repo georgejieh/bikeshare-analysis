@@ -4,10 +4,14 @@ SELECT * FROM ride_types;
 -- ride_times table
 SELECT * FROM ride_times;
 
+-- ride_dates table
+SELECT * FROM ride_dates;
+
 -- joined table
-SELECT t.ride_id, t.rideable_type, t.member_casual, ti.ride_length, ti.day_of_week, ti.season, ti.month_of_year
+SELECT t.ride_id, d.started_at, d.ended_at, t.rideable_type, t.member_casual, ti.ride_length, ti.day_of_week, ti.season, ti.month_of_year
 FROM ride_types t
-JOIN ride_times ti ON t.ride_id = ti.ride_id;
+JOIN ride_times ti ON t.ride_id = ti.ride_id
+JOIN ride_dates d ON t.ride_id = d.ride_id;
 
 -- total amount of usable ride data record
 SELECT COUNT(*) AS total_amount_of_rides FROM ride_types;
