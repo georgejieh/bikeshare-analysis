@@ -20,12 +20,8 @@ SELECT COUNT(*) AS total_amount_of_rides FROM ride_types;
 SELECT MODE() WITHIN GROUP (ORDER BY day_of_week) AS mode_of_day_of_week FROM ride_times;
 
 -- median ride length in seconds
-SELECT ride_length AS median_ride_length
-FROM ride_times 
-ORDER BY ride_length
-OFFSET (
-	SELECT COUNT(*) FROM ride_times)/2
-LIMIT 1;
+SELECT median(ride_length) AS median_ride_length
+FROM ride_times;
 
 -- average ride length in seconds
 SELECT AVG(ride_length) as avg_ride_length FROM ride_times;
@@ -60,11 +56,15 @@ FROM ride_types t
 JOIN ride_times ti ON t.ride_id = ti.ride_id
 GROUP BY t.member_casual;
 
--- average ride length in seconds per member/casual per day of the week
-SELECT ti.day_of_week, t.member_casual, AVG(ti.ride_length) as avg_ride_length
+-- average and median ride length in seconds per member/casual per day of the week
+SELECT ti.day_of_week, t.member_casual, 
+	AVG(ti.ride_length) as avg_ride_length, 
+	median(ti.ride_length) as median_ride_length, 
+	MAX(ti.ride_length) as maximum_ride_length
 FROM ride_types t
 JOIN ride_times ti ON t.ride_id = ti.ride_id
-GROUP BY ti.day_of_week, t.member_casual;
+GROUP BY ti.day_of_week, t.member_casual
+ORDER BY ti.day_of_week, t.member_casual;
 
 -- average ride length in seconds per rideable type
 SELECT t.rideable_type, AVG(ti.ride_length) as avg_ride_length
@@ -88,10 +88,12 @@ FROM ride_types
 GROUP BY rideable_type;
 
 -- average ride length in seconds per rideable type per member/casual
-SELECT t.rideable_type, t.member_casual, AVG(ti.ride_length) as avg_ride_length
+SELECT t.rideable_type, t.member_casual, 
+	AVG(ti.ride_length) as avg_ride_length
 FROM ride_types t
 JOIN ride_times ti ON t.ride_id = ti.ride_id
-GROUP BY t.rideable_type, t.member_casual;
+GROUP BY t.rideable_type, t.member_casual
+ORDER BY t.rideable_type, t.member_casual;
 
 -- number of member/casual rides per season
 SELECT ti.season,
