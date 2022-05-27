@@ -137,7 +137,7 @@ After using this calculation we've realized it creates a few #NUM! errors. These
 
 ## Analyze Phase
 
-For the analyze step we decided to use Excel, SQL, and R. Each tool have it's strength and weaknesses, so we believed all three together will provide more insights into the data than just using any one of them.
+For the analyze step we decided to use Excel and SQL. Each tool have it's strength and weaknesses, so we believed all three together will provide more insights into the data than just using any one of them.
 
 #### Excel Analysis
 
@@ -214,7 +214,7 @@ From the pivot table we learn the following:
 - With the aforementioned patterns, most casual riders riding between Monday through Thursday could be riding for the same reasons as annual members between Tuesday through Thursday. They are possible targets for marketing.
 - People tend to ride longer during spring and summer. Possibly due to nicer weather. While much shorter during winter. Keep in mind these trips takes place around Chicago area where winter can get as cold as 27 degrees Fahrenheit, while summers rarely get hotter than 82 degrees Fahrenheit.
 
-### pSQL Analysis
+#### pSQL Analysis
 
 To be able to drill into more details into the data that pivot tables can't accomplish, such as finding average annual member ride length per season, we've decided to use SQL for analysis as well. Out of all the SQL option, pSQL was chosen due to accessibility. 
 
@@ -384,7 +384,7 @@ From these reults we've learned the following:
 - Like with all our results before we can tell that casual riders on average rides longer than annual members, where members ride on average 12 to 15 minutes, while casual riders ride on average 20 to 35 minutes when not including docked bikes. 
 - Another pattern we see is that classic bikes tends to be longer rides than electric bikes. This makes sense for annual members since most of their rides are for commutes. A electric bike is faster than a normal bike, so when traveling the same distance it would take less time. The same phenomenon appearing for casual riders means that there are enough commute like trips for a statistial trend to appear.
 
-### Conclusions
+#### Conclusions
 
 From the analysis shown in both SQL and Excel we can see the following:
 
@@ -394,3 +394,134 @@ From the analysis shown in both SQL and Excel we can see the following:
 - Only casual riders use docked bikes, but their bike preference is electric bikes, while annual members prefer casual bikes.
 - Electric bike trips tends to be shorter across the board. It is suggested that is due to them being faster, but when looking at bike pricing from the data source, Lyft Bikes, this could also be due to electric bikes being more expensive to rent.
 - The 30% commute and 70% leisure rides proposed by the company seems to be refuted by the data. The statistical patterns seems to suggest the distribution is closer to 50:50. 
+
+## Share Phase
+
+For the share phase we use three tools for visualization. We use Excel for acessibility and visualizing results of the pivot tables. R is also used for the robustness of ggplot providing insights Excel is unable to provide. Finally we use Tableau for the granular interactiveness of their visualization, and the charts and graphs created with Tableau is very aesthetically pleasing.
+
+#### Excel Visualization
+
+For the visualization, we've made a new sheet in the consolidated-processed-data.xlsx workbook named charts&graphs. Then copied over values from pivot tables that we find meaningful. The following visualizations were produced:
+
+![img](https://i.imgur.com/uk50Tpr.png)
+
+![img](https://i.imgur.com/oQeA2u4.png)
+
+![img](https://i.imgur.com/mgRo4Mu.png)
+
+From these charts we learned the following:
+
+- During winter and autumn the number of total classic bike trips are less than total annual member trips, while in summer and spring there are more classic bike trips than annual member trips.
+- Since we know that classic bikes are the preferred choice for annual members, it means during summer and spring there is a significant increase in casual riders riding classic bikes. 
+- During autumn we see a large spike in use of electric bikes and a significant drop in classic bike usage. This could be due to an increase in electric bike usage among annual members during autumn.
+- Ride trends across bike types seems to be heavily influenced by casual riders despite they represent 5% less of the trips recorded. 
+- The annual members ride trends shows a decreased in trips on weekends and inceasing trips during weekdays, while casual trips trend with increasing rides on weekends and decreasing during weekdays. 
+- The resulting total trip trends shows the number of rides from Monday through Thursday to be fairly consistent, which shows a probability that a portion of casual riders use the bikeshare program the same way as annual members. 
+
+#### R Visualization
+
+To start R visualization we would need to import the necessary data and create data frames. The data being imported will be the same as the ones imported into SQL, however here we decided to omit the timestamps. The following code was used:
+
+```R
+# install and activate necessary packages
+install.packages('tidyverse')
+library(tidyverse)
+
+# import data
+setwd(".../bikeshare-analysis/processed-data/csv-files-for-import")
+getwd()
+data1 <- read.csv("ride_types.csv", stringsAsFactors = T)
+data2 <- read.csv("ride_times.csv", stringsAsFactors = T)
+data <- merge(data1, data2, by.x = "ride_id", by.y = "ride_id")
+
+# check data integrity
+head(data)
+str(data)
+summary(data)
+```
+
+After the data was imported and made into a data frame, we cleaned up the data frame so levels can be properly identified and remove data that isn't crucial to the analysis.
+
+```R
+# delete useless data
+data$ride_id <- NULL
+rm(data1, data2)
+
+# set factors for some integer columns
+data$day_of_week <- as.factor(data$day_of_week)
+data$month_of_year <- as.factor(data$month_of_year)
+
+# rename factor levels
+levels(data$day_of_week) <- c("Sun", "Mon", "Tue", "Wed", 
+                              "Thu", "Fri", "Sat")
+levels(data$month_of_year) <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+levels(data$rideable_type) <- c("Classic", "Docked", "Electric")
+
+# convert ride times to minutes
+data$ride_length <- data$ride_length/60
+```
+
+In the previous code we removed ride id since they serve no real purpose for analysis in R. We also made sure that day of the week and month of year is recognized as factors since in the original data they were numeric so the data import doesn't categorize them as factors by default. Then we rename each level so that it is more logical. The ride length was also converted to minutes from seconds for legibility.
+
+After experimenting with different charts and graphs we ended up with seven meaningful visuals. The code for them is as follows:
+
+```R
+boxplot_base <- ggplot(data=data, aes(y=ride_length, 
+                                      colour=member_casual))
+
+boxplot1 <- boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=season)) + 
+  coord_cartesian(ylim=c(0,85))
+
+boxplot2 <- boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=day_of_week)) + 
+  coord_cartesian(ylim=c(0,85))
+
+boxplot3 <- boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=month_of_year)) + 
+  coord_cartesian(ylim=c(0,100))
+
+boxplot4 <- boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=rideable_type)) + 
+  coord_cartesian(ylim=c(0,115))
+
+histogram_base <- ggplot(data=data, aes(x=ride_length, fill=member_casual))
+
+histogram1 <- histogram_base + geom_histogram(binwidth=2, colour="white", alpha=0.65) + 
+  geom_freqpoly(binwidth=2, aes(colour=rideable_type)) +
+  facet_grid(month_of_year~member_casual, scales="free") +
+  coord_cartesian(xlim=c(0,35))
+ 
+histogram2 <- histogram_base + geom_histogram(binwidth=2, colour="white", alpha=0.65) + 
+  geom_freqpoly(binwidth=2, aes(colour=rideable_type)) +
+  facet_grid(season~member_casual, scales="free") +
+  coord_cartesian(xlim=c(0,40))
+
+histogram3 <- histogram_base + geom_histogram(binwidth=2, colour="white", alpha=0.65) + 
+  geom_freqpoly(binwidth=2, aes(colour=rideable_type)) +
+  facet_grid(day_of_week~member_casual, scales="free") +
+  coord_cartesian(xlim=c(0,35))
+        
+```
+
+In the histograms xlim was used to cut out outliers so the graph can be more viewable. The resulting visuals are as follow:
+
+![img](https://i.imgur.com/L1xpxIq.png)
+
+![img](https://i.imgur.com/Y4U3jHY.png)
+
+![img](https://i.imgur.com/5XRviBa.png)
+
+![img](https://i.imgur.com/xEkt6qL.png)
+
+![img](https://i.imgur.com/LG0U24z.png)
+
+![img](https://i.imgur.com/fZQz64J.png)
+
+![img](https://i.imgur.com/6az0410.png)
+
+For these visuals we didn't learn that many new things, however since they are all expressed as ride lengths instead of ride counts, in terms of visualization, it expresses different trends when compared to the excel visuals. Here is what we learned:
+
+- Due to docked bikes causing ride length outliers, casual riders tends to have longer tails from a statisical stand point and their median ride length flutuates wildly between months, days of the week, and months.
+- During weekdays, annual member's median ride length is statistically the same.
+- Ride length for both members and casuals tends to increase during holiday/vacation season. The fluctuation is more pronouned among casual riders.
+- October is an interesting month where majority of rides were made on electric bikes among both causual and annual members.
+- In August, member rides are virtually non-existent. 
+- Beause of long tails, average ride length is over 10 minutes, but the histogram shows, for both casual and annual members, majority of the rides lie between 6 to 16 minutes.
