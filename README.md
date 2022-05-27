@@ -525,3 +525,22 @@ For these visuals we didn't learn that many new things, however since they are a
 - October is an interesting month where majority of rides were made on electric bikes among both causual and annual members.
 - In August, member rides are virtually non-existent. 
 - Beause of long tails, average ride length is over 10 minutes, but the histogram shows, for both casual and annual members, majority of the rides lie between 6 to 16 minutes.
+
+#### Tableau Visualization
+
+We choose to use Tableau for the sharing phase as well due to the interactiveness of Tableau visualizations. The process for Tableau is similar to R where we first import the data into the software in the data source tab and join the tables together. Then we play with the data with different visuals until we gind something that is meaningful. The resulting dashboard can be found [here](https://public.tableau.com/app/profile/george.jieh/viz/GoogleDataAnalyticsCase1ConsolidatedVisuals/Dashboard1) with the screenshot of it below:
+
+![img](https://i.imgur.com/7TlIjsu.png)
+
+I recommend going to the dashboard link so the interactions can be manipulated. In the Tableau visuals we added a calculated field where we mark holidays and weekends based on the Chicago School District's academic calendar. From this we were able to learn an interesting insight where, with the exception of docked bikes, people tend to ride more oftten during weekdays while they ride longer on holiday and weekends. The time difference for members are negligible but the the time difference for casual is significant. The opposite is true when it comes to ride count. 
+
+## Act Phase
+
+From our analysis the main target group that is possible to be converted to annual member from casual riders are individuals that ride under the following conditions:
+
+- People that ride during weekdays and on classic bikes.
+- People that ride during winter and spring on classic bikes.
+
+It will be recommended for stakeholders to come up with marketing plans that target these two groups of people. This could include things such as annual membership discounts during winter and spring or targeted annual membership advertising for individuals that have a record of riding on weekdays.
+
+There are many more data that could have been useful. One that comes to mind is trip route data. Knowing the exact path each trip took would have give us a better understanding as to why a trip was made. Right now stating that most members ride for commute is just a conjecture based on ride pattern difference during weekends and holidays. With actual path data we can confirm with a higher accuracy regarding the reason behind a specific bike trip.
