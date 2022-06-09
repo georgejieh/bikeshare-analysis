@@ -547,7 +547,7 @@ It will be recommended for stakeholders to come up with marketing plans that tar
 
 There are many more data that could have been useful. One that comes to mind is trip route data. Knowing the exact path each trip took would have give us a better understanding as to why a trip was made. Right now stating that most members ride for commute is just a conjecture based on ride pattern difference during weekends and holidays. With actual path data we can confirm with a higher accuracy regarding the reason behind a specific bike trip.
 
-
+###### [Back To Home](https://georgejieh.github.io/georges-data-analytics-portfolio/)
 
 
 
