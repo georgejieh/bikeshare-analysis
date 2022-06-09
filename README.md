@@ -546,3 +546,15 @@ From our analysis the main target group that is possible to be converted to annu
 It will be recommended for stakeholders to come up with marketing plans that target these two groups of people. This could include things such as annual membership discounts during winter and spring or targeted annual membership advertising for individuals that have a record of riding on weekdays.
 
 There are many more data that could have been useful. One that comes to mind is trip route data. Knowing the exact path each trip took would have give us a better understanding as to why a trip was made. Right now stating that most members ride for commute is just a conjecture based on ride pattern difference during weekends and holidays. With actual path data we can confirm with a higher accuracy regarding the reason behind a specific bike trip.
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" charset="utf-8" 
+src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,
+https://vincenttam.github.io/javascripts/MathJaxLocal.js"></script>
