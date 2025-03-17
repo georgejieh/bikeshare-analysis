@@ -1,276 +1,148 @@
-# Google Data Analytics Case Study 1: How Does a Bike-Share Navigate Speedy Success?
+# Bike-Share Usage Analysis
 
-![alt text](https://i.imgur.com/trZS04H.png)
+![Bike-Share Image](https://i.imgur.com/trZS04H.png)
 
-- TOC
-{:toc}
+## Project Overview
 
+This project analyzes bike-share usage data to understand differences between annual members and casual riders. The insights are aimed at developing strategies to convert casual riders into annual members and optimize marketing efforts.
 
-## Introduction
+## Business Objective
 
-Cyclistic is a bike-share company that is based in the Chicago area. Their bike-share program features more than 5800 bikes and 600 docking stations. The company sets itself apart by offering bike styles that are more inclusive to people with disabilities such as reclining bikes, hand tricycles, and cargo bikes. The expectation is about 30% of the trips are used for commute to work each day while the rest is geared towards leisure. The director of marketing believes Cyclistic's future sucess will depend on maximizing the number of annual memberships. The team would like to understand how casual rides and annual members use bikes different to come up with a new marketing strategy to convert casual riders to annual members. 
+- Identify usage pattern differences between annual members and casual riders
+- Analyze factors that might influence casual riders to purchase annual memberships
+- Develop data-driven marketing recommendations
 
-## Ask Phase
+## Key Stakeholders
 
-#### Business Task
+- Director of Marketing
+- Marketing and Analytics Team
+- Executive Team
 
-Identify how annual members and casual riders use Cyclistic differently. Analyze why would casual riders consider buying Cyclistic annual memberships. Come up with methods for the company to use digital media to influence casual rider to become members.
+## Data Source
 
-#### Key Stake Holders
+This analysis uses public trip data provided by Motivate International Inc. under this [license](https://ride.divvybikes.com/data-license-agreement). The data covers bike rides for the year 2021 and is available from [this source](https://divvy-tripdata.s3.amazonaws.com/index.html).
 
-- **Lily Moreno:** Director of Marketing
-- **Cyclistic Marketing and Analytics Team**
-- **Cyclistic Executive Team**
+## Methodology
 
-## Prepare Phase
+### Data Preparation
 
-Cyclistic is a fictional company made for the purpose of this case study. The data that will be used for the analysis is provided by Motivate International Inc for the real company Divy (which is also known as Lyft Bikes and Scooters, LLC) under this [license](https://ride.divvybikes.com/data-license-agreement).
+The analysis workflow included:
+1. Downloading monthly trip data for 2021
+2. Standardizing file naming conventions
+3. Converting files to appropriate formats for analysis
+4. Initial data quality assessment
 
-2021 trip data were downloaded from [here](https://divvy-tripdata.s3.amazonaws.com/index.html). The zip files were placed in the project folder under /2021-raw-trip-data/zip-files. The files were then unzipped and the resulting CSV files were placed in the /2021-raw-trip-data/csv-files directory. To simplify the file names, divvy was removed so the naming scheme was simplified to YYYYMM-subjectmatter format.  After the file names were changed, each file were then duplicated and converted to XLS files and placeded in the /2021-raw-trip-data/xls-files directory. This conversion was necessary for us to easily manipulate the data later in Excel.
+Limitations identified:
+- Some rows missing station information
+- Inconsistent station ID formats
+- Geographic data reliability issues
 
-The data presented gives us insight into the trip behaviors of casual riders and annual members. Each row is labeled member or casual and shows what bike they rode and when they rode it. By looking at these data points we can come up with ride length, bike type, and ride frequency trends between the two types of riders.
-
-A preliminary look at the data shows some issues. The data provides geographic information regarding the trips. However, quite a few rows are missing station information and the station IDs were not standardized i.e. some station IDs are labeled as 3 digit numbers, some as 5, while others are a combination of characters and numbers. All of this resulting in the geographic data to be not useful. 
-
-## Process Phase
+### Data Processing
 
 #### Tool Selection
 
-To process and clean the data we choose to primarily use Microsoft Excel. This tool was chosen because the full dataset was divided into smaller bite size chunks that is still manageable via Excel. Also Excel would be used for preliminary analysis later on, so starting with Excel will make it more manageable. 
+To process and clean the data, Microsoft Excel was chosen as the primary tool. This tool was selected because the full dataset was divided into smaller chunks manageable via Excel, and Excel would be used for preliminary analysis later on.
 
-#### Initial Data Cleaning Process
+#### Data Cleaning Process
 
-To start the cleaning process we made duplicates of each XLS file and placed it in the project's /processed-data/xls-files directory. First we removeed the data points that were obviously problematic, which was the start station name and id, and end station name and id. Initially the goal was only to remove trips that had missing station names. While going through the process, we came to realize it would reduce sample size too much and impact data quality. As a result it is better to omit station names and not do analysis revolving around it then remove rows that will impact all types of analysis. Since station name related columns were removed, station id related columns are of no use by itself, so they were also removed.
+The initial cleaning process involved:
+1. Creating duplicates of each file in the project's /processed-data/xls-files directory
+2. Removing problematic data points, including start/end station names and IDs due to inconsistencies
+3. Standardizing data formats and syntax
+4. Removing a small number of records with non-standard ride_id formats
 
-The next step of the process was to make sure all data is standardized in format and/or syntax. By filtering ride_id column, it have came to our attention that a few handful of trip data have ride_ids that doesn't conform to 16 length alphanumeric format. With almost 200k rows of data, deleting a few handful of rows of trip data shouldn't impace data quality too much, so these trip data was removed to make importing to SQL database easier later on.   
+#### Preliminary Calculations
 
-#### Initial Preliminary Calculations
+Several calculated fields were created to facilitate analysis:
 
-To make the data easier to work with, we've calculated each trip's ride length, distance traveled, and extracted day of the week information from the trip time stamps. 
-
-###### Ride Length Calculation
-
-To calculate ride length for each trip the following equation was used:
-
+**Ride Length Calculation**
 ```Excel
 = [ended_at] - [started_at]
 ```
 
-More specifically ended_at is column D and started_at is column C. So for row 2, the equation will look as such:
+This calculation yielded fractional time values that were formatted into HH:MM:SS syntax for better readability. Rows with negative ride length values (indicating data errors) were deleted.
 
-```Excel
-= D2 - C2
-```
-
-The result will show up as factional time. To make the result more understandable, the cells were then formated into HH:MM:SS syntax. For example the result for row 2 went from 0.007233796 to 00:10:25, which we can easily understand as 10 minutes and 25 seconds. 
-
-After doing this calculation, we found a handfull of rows that would end up with negative ride length values. This is caused by the trip ending time being earlier than the trip starting time. This is clearly an error with the time tracking system, so these rows were deleted.
-
-###### Day of the Week Extraction
-
-To extract day of the week information from started_at time stamp, the following equation was used:
-
+**Day of the Week Extraction**
 ```Excel
 = WEEKDAY([started_at],1) - 1
 ```
 
-An example of this equation used for row 2, the equation would be written as:
+The WEEKDAY() function extracts day of the week information from timestamps. We adjusted the value by subtracting 1 to match SQL's day mapping scheme (0=Sunday through 6=Saturday).
 
-```Excel
-= WEEKDAY(C2,1) - 1
-```
-
-The WEEKDAY() function in excel extracts day of the week data from time stamps. The first variable designates the time stamp to be extracted and the second variable designates mapping scheme, also known as return type. There are 10 different return types and they display as follows:
-
-| Return Type | Number Returned                           |
-| ----------- | ----------------------------------------- |
-| 1           | Numbers 1 (Sunday) through 7 (Saturday)   |
-| 2           | Numbers 1 (Monday) through 7 (Sunday)     |
-| 3           | Numbers 0 (Monday) through 6 (Sunday)     |
-| 11          | Numbers 1 (Monday) through 7 (Sunday)     |
-| 12          | Numbers 1 (Tuesday) through 7 (Monday)    |
-| 13          | Numbers 1 (Wednesday) through 7 (Tuesday) |
-| 14          | Numbers 1 (Tuesday) through 7 (Wednesday) |
-| 15          | Numbers 1 (Friday) through 7 (Thursday)   |
-| 16          | Numbers 1 (Saturday) through 7 (Friday)   |
-| 17          | Numbers 1 (Sunday) through 7 (Saturday)   |
-
-The return type that makes the most sense for our puposes is type 1, which is also the default return type used for this function. However SQL, which we will use later on, utilizes numbers 0 (Sunday) through 6 (Saturday) as it's day of the week mapping scheme, which is why the function result is minused by 1. 
-
-###### Distance Traveled Calculation
-
-To calculate distance travled, we will need to calculate the distanace between two longitude and latitude coordinates. For us to do so the Haversine formula would be needed. The Haversine formula is as follows:
-
+**Distance Traveled Calculation**
+For geographic distance calculations, the Haversine formula was implemented:
 
 $$
 Distance = R \times arccos[(sin\varphi_1 \times sin\varphi_2) + cos\varphi_1 \times cos\varphi_2\times cos\Delta\lambda]
 $$
 
-
-φ is value of latitude in radians, λ is value of longtitude in radians, and R is earth's radius, which is approximately 3963 kilometers or 6377.83 miles. To calculate radians, the equation for latitude would be:
-
+Where φ is latitude in radians, λ is longitude in radians, and R is Earth's radius (6377.83 miles). The radians conversion is calculated as:
 
 $$
 \phi = \frac{latitude}{(180/\pi)}
 $$
 
-
-While the equation for longitude would be:
-
-
 $$
 \lambda = \frac{longitude}{(180/\pi)}
 $$
 
-
-Since we are using Excel, we can easily calculate radians with the function RADIANS(). So the full Haversine formula in Excel format with the result in miles will be the following:
-
+In Excel, this was implemented as:
 ```Excel
 = 6377.83 * ACOS((SIN(RADIANS([start_lat]))*SIN(RADIANS([end_lat])))+COS(RADIANS([start_lat]))*COS(RADIANS([end_lat]))*COS(RADIANS([end_lng])-RADIANS([start_lng])))
 ```
 
-An example of this equation used for row 2, the equation would be written as:
+However, this calculation was ultimately omitted from analysis after discovering that start and end locations don't accurately capture the actual distance traveled, as users simply return bikes to the nearest station.
 
-```Excel
-= 6377.83 * ACOS((SIN(RADIANS(E2))*SIN(RADIANS(G2)))+COS(RADIANS(E2))*COS(RADIANS(G2))*COS(RADIANS(H2)-RADIANS(F2)))
-```
-
-After using this calculation we've realized it creates a few #NUM! errors. These errors are created when the bike was borrowed at and returned to the same exact location. This cause us to realize calculating distance won't be much of an insight because borrow and return locations have no direct correlation with how far the user actually rode. Since users will return the bike to the nearest station to where they end their trip. If the trip was a round trip, it would be parked close to the borrowed location. Ultimately this resulted in these calculations to be omitted and longitude and latitude data deleted during the cleaning process. 
-
-## Analyze Phase
-
-For the analyze step we decided to use Excel and SQL. Each tool have it's strength and weaknesses, so we believed all three together will provide more insights into the data than just using any one of them.
+### Analysis Methodology
 
 #### Excel Analysis
 
-To begin the process for Excel analysis we first need to combine all 12 XLS files into 1 XLSX file. We've created the XLSX file in the directory /processed-data/ and named it consolidated-processed-data. With the data merged, we prepared more calculations in preperation for pivot tables. 
+Additional calculated fields were created for deeper analysis:
 
-###### Additional Calculations
-
-One of the first calculation we did was to extract seasons from time stamp. By being able to group the data as season we can see trip trends across each season and determine if change in weather changes anything about user habits. To extract season information the following equation was used:
-
+**Seasonal Classification**
 ```Excel
 =LOOKUP(MONTH([started_at]),{1,2,5,8,11;"Winter","Spring","Summer","Autumn","Winter"})
 ```
 
-The equation extracts the month from started_at time stamp, and if the value is 11, 12, or 1 then it return the result Winter. If its between 2 to 5, then its Spring and so on. 
+This formula categorizes trips by season based on the month.
 
-The next calculation was to extracting month from time stamp. All we need to do for this was to use the MONTH() function. 
-
-The last set of calculation was all logical formulas. We want each trip to return a certain binary result based on a certain criteria. For example, if we want the data to return 1 if the bike trip was taken by an annual member and 0 if it wasn't, then we may use this equation:
-
+**Binary Indicators**
+For pivot table analysis, binary fields were created:
 ```Excel
 =IF([member_casual]="member",1,0)
 ```
 
-The reason why we need the binary results is due to pivot tables later on. In pivot tables there isn't an option for you to count the number of a certain value out of a column that have multiple different values. For example, you cannot tell a pivot table to count the number of members in a column that have both members and casuals. However if you have a separate columns that returns 1 as a result for the trip being an annual membership trip, you can use sum to add up all the member trips.
+These fields enabled count aggregations in pivot tables.
 
-###### Descriptive Analysis
+#### SQL Analysis
 
-For better organization, a new sheet named descriptive_analysis was created. In here we found out the following:
-
-| Description                                | Value                                     |
-| ------------------------------------------ | ----------------------------------------- |
-| Average Ride Length                        | 22 Minutes and 23 Seconds                 |
-| Longest Ride Length                        | 33 Days 4 Hours 16 Minutes and 42 Seconds |
-| Median Ride Length                         | 11 Minutes and 34 Seconds                 |
-| Day of the Week With Most Rides            | Saturday                                  |
-| Percentage of Trips Made By Annual Members | 52.51%                                    |
-| Percentage of Trips Made By Casual Riders  | 47.49%                                    |
-| Preferred Bike Type by Annual Members      | Classic Bikes                             |
-| Preferred Bike Type of Casual Riders       | Electric Bikes                            |
-
-From the descriptive analysis we learned the following:
-
-- Casual Riders and Annual Members rides very differently, with each have preferences over different bike types due to differences in usage purposes.
-- Distribution of bike trips sways towards the weekends, which is in line with the expectation that the company have regarding 30% of trips being commutes while the rest being used for casual rides.
-- The preference of Classic Bikes for Annual Members seems to indicate Annual Members uses the bikes for commute more often since Classic Bikes are lighter than Electric bikes, but the Annual Member versus Casual Member percentage trip distribution seems to go against the 30% : 70% ratio presented by the company.
-- Majority of rides seems to be on the shorter end between 11 to 22 minutes.
-- There are a few outliers where the ride length spans multiple days.
-
-###### Pivot Tables
-
-The next step of the analysis is to use pivot tables. In pivot tables we experimented with the data is various areas to look for patterns. 
-
-Below are a few pivot tables that were generated:
-
-![img](https://i.imgur.com/fDm7D4Y.png)
-
-![img](https://i.imgur.com/KbNM9m7.png)
-
-![img](https://i.imgur.com/11EtHJR.png)
-
-![img](https://i.imgur.com/QloHCCb.png)
-
-![img](https://i.imgur.com/A483Am0.png)
-
-From the pivot table we learn the following:
-
-- The 33 Days + trip was taken by a casual rider during Spring of April on a docked bike. 
-- Annual members on average takes shorter rides than casual riders, but at a slightly higher frequency.
-- Annual members do not use docked bikes at all and most really long trips are docked bikes.
-- If rows with problematic data were not deleted, the number of rides each month would be exactly the same, so we cannot determine which months or seasons people ride more often.
-- We see a spike in trips on Fridays through Sundays. There is a dip in trip on Monday. While the number of trips between Tuesday through Thursday are fairly constant.
-- With annual members, trip frequency from Tuesday through Saturday is fairly constant, while there is a dip on Sunday and Monday. 
-- With casual riders the trip frequency between Monday to Thursday is fairly constant with a spike starting on Friday till Sunday.
-- With the aforementioned patterns, most casual riders riding between Monday through Thursday could be riding for the same reasons as annual members between Tuesday through Thursday. They are possible targets for marketing.
-- People tend to ride longer during spring and summer. Possibly due to nicer weather. While much shorter during winter. Keep in mind these trips takes place around Chicago area where winter can get as cold as 27 degrees Fahrenheit, while summers rarely get hotter than 82 degrees Fahrenheit.
-
-#### pSQL Analysis
-
-To be able to drill into more details into the data that pivot tables can't accomplish, such as finding average annual member ride length per season, we've decided to use SQL for analysis as well. Out of all the SQL option, pSQL was chosen due to accessibility. 
-
-###### pSQL Database Schema and Data Import
-
-To keep each table from being too wide, the combined data was divided into three tables. One specifically for different types of bikes, one for calculated time related trip data, and one specficially for ride dates. All three tables are joined to ride_type table's ride_id as primary key. The query is as follows:
+A PostgreSQL database was created with the following schema:
 
 ```sql
-CREATE TABLE ride_types
-	(
-		ride_id VARCHAR(16) PRIMARY KEY,
-		rideable_type VARCHAR(13) NOT NULL,
-		member_casual VARCHAR(6) NOT NULL
-	);
+CREATE TABLE ride_types (
+    ride_id VARCHAR(16) PRIMARY KEY,
+    rideable_type VARCHAR(13) NOT NULL,
+    member_casual VARCHAR(6) NOT NULL
+);
 
-CREATE TABLE ride_times
-	(
-		ride_id VARCHAR(16) NOT NULL,
-		ride_length INTEGER NOT NULL,
-		day_of_week SMALLINT NOT NULL,
-		season VARCHAR(6) NOT NULL,
-		month_of_year SMALLINT NOT NULL,
-		FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
-	);
+CREATE TABLE ride_times (
+    ride_id VARCHAR(16) NOT NULL,
+    ride_length INTEGER NOT NULL,
+    day_of_week SMALLINT NOT NULL,
+    season VARCHAR(6) NOT NULL,
+    month_of_year SMALLINT NOT NULL,
+    FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
+);
 
-CREATE TABLE ride_dates
-	(
-		ride_id VARCHAR(16) NOT NULL,
-		started_at TIMESTAMP NOT NULL,
-		ended_at TIMESTAMP NOT NULL,
-		FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
-	);
+CREATE TABLE ride_dates (
+    ride_id VARCHAR(16) NOT NULL,
+    started_at TIMESTAMP NOT NULL,
+    ended_at TIMESTAMP NOT NULL,
+    FOREIGN KEY(ride_id) REFERENCES ride_types(ride_id)
+);
 ```
 
-We then created CSV files that corresponds to the schema with data extracted from cibsikudated-processed-data.xlsx and placed it in the /processed-data/csv-files-for-import/ directory. Each CSV file was named based on their corresponding database table name. pSQL cannot properly interpret time length in HH:MM:SS format, so ride length data was all converted into seconds. Once everything is ready, the CSV files were imported into the database through the following query:
-
-```sql
-COPY ride_types FROM 
-'.../bikeshare-analysis/processed-data/csv-files-for-import/ride_types.csv' CSV HEADER;
-
-COPY ride_times FROM 
-'.../bikeshare-analysis/processed-data/csv-files-for-import/ride_times.csv' CSV HEADER;
-
-COPY ride_dates FROM 
-'.../bikeshare-analysis/processed-data/csv-files-for-import/ride_dates.csv' CSV HEADER;
-```
-
-The above file paths were redacted to only show folders that are relavent to this case study.
-
-###### Summary Statistics and Basic Analysis
-
-Starting off, to confirm all data is imported correctly I queried some basic statistics regarding the data that I've previously already gotten the answers for. Such as median ride length, average ride length, total amount of trips, and max ride length. 
-
-pSQL does not have a function to calculate median, so I had to create a custom median function with the following query:
+A custom median function was implemented for statistical analysis:
 
 ```sql
 CREATE OR REPLACE FUNCTION _final_median(numeric[])
@@ -295,134 +167,9 @@ CREATE AGGREGATE median(numeric) (
 );
 ```
 
-The query used for the aforementioned basic statistics were as follows:
+#### R Analysis Methodology
 
-```sql
--- number of total trips
-SELECT COUNT(*) AS total_amount_of_rides FROM ride_types;
-
--- mode of day of the week
-SELECT MODE() WITHIN GROUP (ORDER BY day_of_week) AS mode_of_day_of_week FROM ride_times;
-
--- median ride length in seconds
-SELECT median(ride_length) AS median_ride_length
-FROM ride_times;
-
--- average ride length in seconds
-SELECT AVG(ride_length) as avg_ride_length FROM ride_times;
-
--- max ride length in seconds
-SELECT ride_length AS max_ride_length
-FROM ride_times
-ORDER BY ride_length DESC
-LIMIT 1;
-```
-
-Their outputs were as follows:
-
-| Statistics              | Results                                                      |
-| ----------------------- | ------------------------------------------------------------ |
-| Total Number of Trips   | 196465 trips                                                 |
-| Mode of Day of the Week | 6 or Saturday                                                |
-| Median Ride Length      | 694 seconds or 11 minutes and 34 seconds                     |
-| Average Ride Length     | Approximately 1343 seconds or 22 minutes and 23 seconds      |
-| Max Ride Length         | 2866602 seconds or 33 days 4 hours 16 minutes and 42 seconds |
-
-All outputs matches up with the results provided by Excel, so it is safe to say all data got imported correctly.
-
-We then continue with queries that we weren't able to easily with pivot tables on Excel. The query below shows the average, maximum, and median ride length of annual members and casual riders per day of the week.
-
-```sql
-SELECT ti.day_of_week, t.member_casual, 
-	AVG(ti.ride_length) as avg_ride_length,
-	median(ti.ride_length) as median_ride_length,
-	MAX(ti.ride_length) as maximum_ride_length
-FROM ride_types t
-JOIN ride_times ti ON t.ride_id = ti.ride_id
-GROUP BY ti.day_of_week, t.member_casual
-ORDER BY ti.day_of_week, t.member_casual;
-```
-
-The query results pulls up the following table. The actual table generated is different from the table shown here, but the statistical results are the same. To have the query show exactly what the table below shows the query would need to be changed by removing t.member_casual from select and GROUP BY. The contents within AVG(), MAX(), and median() functions would also need to be changed to be member and casual specific with the use of subqueries. Though these changes would create a easier to read table, but would be bulkier and less efficient.
-
-| Day of the Week | Average Member Ride Length | Average Casual Ride Length | Median Member Ride Length | Median Casual Ride Length | Max Member Ride Length | Max Casual Ride Length |
-| --------------- | -------------------------- | -------------------------- | ------------------------- | ------------------------- | ---------------------- | ---------------------- |
-| Sunday          | 948 Seconds                | 2374 Seconds               | 621 Seconds               | 1047 Seconds              | 89995 Seconds          | 2137331 Seonds         |
-| Monday          | 865 Seconds                | 1717 Seconds               | 558 Seconds               | 893 Seconds               | 89995 Seconds          | 444809 Seconds         |
-| Tuesday         | 802 Seconds                | 1608 Seconds               | 546 Seconds               | 835 Seconds               | 89993 Seconds          | 372832 Seconds         |
-| Wednesday       | 800 Seconds                | 1585 Seconds               | 554 Seconds               | 794 Seconds               | 89990 Seconds          | 975130 Seconds         |
-| Thursday        | 785 Seconds                | 1720 Seconds               | 538 Seconds               | 782 Seconds               | 89996 Seconds          | 2498731 Seconds        |
-| Friday          | 817 Seconds                | 1977 Seconds               | 553 Seconds               | 824 Seconds               | 89996 Seconds          | 2866602 Seconds        |
-| Saturday        | 928 Seconds                | 1975 Seconds               | 651 Seconds               | 1015 Seconds              | 89994 Seconds          | 412689 Seconds         |
-
-From these results we've learned the following:
-
-- The average and median member ride length is all within 1 minute margin of each other during weekdays and only increase on weekends.
-- The average and median casual ride lengths decreases while coming out of weekend and increases while going into weekends.
-- Maximum member ride length will never go over 24 hours while the maximum casual ride lengths is at least 4 days long. 
-- These numbers further emphasize that annual members ride these bikes to do things that they consistently do on a regular basis, which results in the more consistent numbers throughout the week, while casual riders are more sporatic, which results in inconsistent numbers. From this we can infer that annual members ride more for commute purposes while casual riders ride more for leisure.
-
-Another interesting query is looking at average ride length per membership type per bike type. The query for that is as follows:
-
-```sql
-SELECT t.rideable_type, t.member_casual, 
-	AVG(ti.ride_length) as avg_ride_length
-FROM ride_types t
-JOIN ride_times ti ON t.ride_id = ti.ride_id
-GROUP BY t.rideable_type, t.member_casual
-ORDER BY t.rideable_type, t.member_casual;
-```
-
-The results are shown below. Like before the table here was edited to make it easier to read, actual query data output table doesn't look like this.
-
-| Bike Type | Average Member Ride Length | Average Casual Ride Length |
-| --------- | -------------------------- | -------------------------- |
-| Classic   | 894 Seonds                 | 2088 Seconds               |
-| Docked    | 0 Seconds                  | 6040 Seconds               |
-| Electric  | 747 Seconds                | 1161 Seconds               |
-
-From these reults we've learned the following:
-
-- Like with all our results before we can tell that casual riders on average rides longer than annual members, where members ride on average 12 to 15 minutes, while casual riders ride on average 20 to 35 minutes when not including docked bikes. 
-- Another pattern we see is that classic bikes tends to be longer rides than electric bikes. This makes sense for annual members since most of their rides are for commutes. A electric bike is faster than a normal bike, so when traveling the same distance it would take less time. The same phenomenon appearing for casual riders means that there are enough commute like trips for a statistial trend to appear.
-
-#### Conclusions
-
-From the analysis shown in both SQL and Excel we can see the following:
-
-- Annual members ride at a more consistent frequency and ride length than casual riders during the weekdays.
-- Both annual members and casual riders see a spike in frequency and ride length on weekends.
-- Annual members never rider over 24 hours suggests when they ride for leisure it is mostly only used for day trips, while casual riders booking a bike for multiple days at a time suggests that they are occassionally use it for vacations in the Chicago area. 
-- Only casual riders use docked bikes, but their bike preference is electric bikes, while annual members prefer casual bikes.
-- Electric bike trips tends to be shorter across the board. It is suggested that is due to them being faster, but when looking at bike pricing from the data source, Lyft Bikes, this could also be due to electric bikes being more expensive to rent.
-- The 30% commute and 70% leisure rides proposed by the company seems to be refuted by the data. The statistical patterns seems to suggest the distribution is closer to 50:50. 
-
-## Share Phase
-
-For the share phase we use three tools for visualization. We use Excel for acessibility and visualizing results of the pivot tables. R is also used for the robustness of ggplot providing insights Excel is unable to provide. Finally we use Tableau for the granular interactiveness of their visualization, and the charts and graphs created with Tableau is very aesthetically pleasing.
-
-#### Excel Visualization
-
-For the visualization, we've made a new sheet in the consolidated-processed-data.xlsx workbook named charts&graphs. Then copied over values from pivot tables that we find meaningful. The following visualizations were produced:
-
-![img](https://i.imgur.com/uk50Tpr.png)
-
-![img](https://i.imgur.com/oQeA2u4.png)
-
-![img](https://i.imgur.com/mgRo4Mu.png)
-
-From these charts we learned the following:
-
-- During winter and autumn the number of total classic bike trips are less than total annual member trips, while in summer and spring there are more classic bike trips than annual member trips.
-- Since we know that classic bikes are the preferred choice for annual members, it means during summer and spring there is a significant increase in casual riders riding classic bikes. 
-- During autumn we see a large spike in use of electric bikes and a significant drop in classic bike usage. This could be due to an increase in electric bike usage among annual members during autumn.
-- Ride trends across bike types seems to be heavily influenced by casual riders despite they represent 5% less of the trips recorded. 
-- The annual members ride trends shows a decreased in trips on weekends and inceasing trips during weekdays, while casual trips trend with increasing rides on weekends and decreasing during weekdays. 
-- The resulting total trip trends shows the number of rides from Monday through Thursday to be fairly consistent, which shows a probability that a portion of casual riders use the bikeshare program the same way as annual members. 
-
-#### R Visualization
-
-To start R visualization we would need to import the necessary data and create data frames. The data being imported will be the same as the ones imported into SQL, however here we decided to omit the timestamps. The following code was used:
+The R analysis process included:
 
 ```R
 # install and activate necessary packages
@@ -435,15 +182,9 @@ getwd()
 data1 <- read.csv("ride_types.csv", stringsAsFactors = T)
 data2 <- read.csv("ride_times.csv", stringsAsFactors = T)
 data <- merge(data1, data2, by.x = "ride_id", by.y = "ride_id")
-
-# check data integrity
-head(data)
-str(data)
-summary(data)
 ```
 
-After the data was imported and made into a data frame, we cleaned up the data frame so levels can be properly identified and remove data that isn't crucial to the analysis.
-
+Data preparation:
 ```R
 # delete useless data
 data$ride_id <- NULL
@@ -464,97 +205,201 @@ levels(data$rideable_type) <- c("Classic", "Docked", "Electric")
 data$ride_length <- data$ride_length/60
 ```
 
-In the previous code we removed ride id since they serve no real purpose for analysis in R. We also made sure that day of the week and month of year is recognized as factors since in the original data they were numeric so the data import doesn't categorize them as factors by default. Then we rename each level so that it is more logical. The ride length was also converted to minutes from seconds for legibility.
+## Analysis Findings
 
-After experimenting with different charts and graphs we ended up with seven meaningful visuals. The code for them is as follows:
+### Key Statistics
 
-```R
-boxplot_base <- ggplot(data=data, aes(y=ride_length, 
-                                      colour=member_casual))
+| Description                                | Value                                     |
+| ------------------------------------------ | ----------------------------------------- |
+| Average Ride Length                        | 22 Minutes and 23 Seconds                 |
+| Longest Ride Length                        | 33 Days 4 Hours 16 Minutes and 42 Seconds |
+| Median Ride Length                         | 11 Minutes and 34 Seconds                 |
+| Day with Most Rides                        | Saturday                                  |
+| Annual Member Trip Percentage              | 52.51%                                    |
+| Casual Rider Trip Percentage               | 47.49%                                    |
+| Annual Member Preferred Bike Type          | Classic Bikes                             |
+| Casual Rider Preferred Bike Type           | Electric Bikes                            |
 
-boxplot1 <- boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=season)) + 
-  coord_cartesian(ylim=c(0,85))
+### Usage Pattern Analysis
 
-boxplot2 <- boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=day_of_week)) + 
-  coord_cartesian(ylim=c(0,85))
+#### Membership Type Analysis by Day of Week
 
-boxplot3 <- boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=month_of_year)) + 
-  coord_cartesian(ylim=c(0,100))
+| Day of the Week | Avg Member Ride (sec) | Avg Casual Ride (sec) | Member Median (sec) | Casual Median (sec) | Max Member Ride (sec) | Max Casual Ride (sec) |
+| --------------- | --------------------- | --------------------- | ------------------- | ------------------- | --------------------- | --------------------- |
+| Sunday          | 948                   | 2374                  | 621                 | 1047                | 89995                 | 2137331               |
+| Monday          | 865                   | 1717                  | 558                 | 893                 | 89995                 | 444809                |
+| Tuesday         | 802                   | 1608                  | 546                 | 835                 | 89993                 | 372832                |
+| Wednesday       | 800                   | 1585                  | 554                 | 794                 | 89990                 | 975130                |
+| Thursday        | 785                   | 1720                  | 538                 | 782                 | 89996                 | 2498731               |
+| Friday          | 817                   | 1977                  | 553                 | 824                 | 89996                 | 2866602               |
+| Saturday        | 928                   | 1975                  | 651                 | 1015                | 89994                 | 412689                |
 
-boxplot4 <- boxplot_base + geom_boxplot(size=1.10, outlier.shape = NA, aes(x=rideable_type)) + 
-  coord_cartesian(ylim=c(0,115))
+This analysis reveals:
+- Annual members show consistent ride lengths during weekdays (approximately 800 seconds) with slight increases on weekends
+- Casual riders' ride lengths fluctuate more, decreasing mid-week and increasing toward weekends
+- Maximum ride durations for members never exceed 25 hours, while casual riders sometimes keep bikes for multiple days
 
-histogram_base <- ggplot(data=data, aes(x=ride_length, fill=member_casual))
+#### Bike Type Usage Analysis
 
-histogram1 <- histogram_base + geom_histogram(binwidth=2, colour="white", alpha=0.65) + 
-  geom_freqpoly(binwidth=2, aes(colour=rideable_type)) +
-  facet_grid(month_of_year~member_casual, scales="free") +
-  coord_cartesian(xlim=c(0,35))
- 
-histogram2 <- histogram_base + geom_histogram(binwidth=2, colour="white", alpha=0.65) + 
-  geom_freqpoly(binwidth=2, aes(colour=rideable_type)) +
-  facet_grid(season~member_casual, scales="free") +
-  coord_cartesian(xlim=c(0,40))
+| Bike Type | Avg Member Ride (sec) | Avg Casual Ride (sec) |
+| --------- | --------------------- | --------------------- |
+| Classic   | 894                   | 2088                  |
+| Docked    | 0                     | 6040                  |
+| Electric  | 747                   | 1161                  |
 
-histogram3 <- histogram_base + geom_histogram(binwidth=2, colour="white", alpha=0.65) + 
-  geom_freqpoly(binwidth=2, aes(colour=rideable_type)) +
-  facet_grid(day_of_week~member_casual, scales="free") +
-  coord_cartesian(xlim=c(0,35))
-        
-```
+Key findings:
+- Annual members do not use docked bikes at all
+- Electric bike trips are consistently shorter for both user types (likely due to faster speeds)
+- Casual riders keep bikes significantly longer across all bike types
 
-In the histograms xlim was used to cut out outliers so the graph can be more viewable. The resulting visuals are as follow:
+## Data Visualization Insights
 
-![img](https://i.imgur.com/L1xpxIq.png)
+### Ride Patterns by Bike Type and Season
 
-![img](https://i.imgur.com/Y4U3jHY.png)
+![Bike Type Usage by Season](https://i.imgur.com/uk50Tpr.png)
 
-![img](https://i.imgur.com/5XRviBa.png)
+This visualization shows:
+- Classic bike usage dominates in summer and spring
+- Electric bike usage increases in autumn
+- Winter sees reduced usage across all bike types
 
-![img](https://i.imgur.com/xEkt6qL.png)
+### Weekly Riding Patterns
 
-![img](https://i.imgur.com/LG0U24z.png)
+![Member vs Casual Weekly Trends](https://i.imgur.com/oQeA2u4.png)
 
-![img](https://i.imgur.com/fZQz64J.png)
+![Member vs Casual Bike Type](https://i.imgur.com/mgRo4Mu.png)
 
-![img](https://i.imgur.com/6az0410.png)
+These charts demonstrate:
+- Annual members ride consistently throughout weekdays with slight weekend decreases
+- Casual riders show dramatic increases in weekend usage
+- Annual members strongly prefer classic bikes
+- Casual riders show more balanced preference between electric and classic bikes
 
-For these visuals we didn't learn that many new things, however since they are all expressed as ride lengths instead of ride counts, in terms of visualization, it expresses different trends when compared to the excel visuals. Here is what we learned:
+### Ride Length Statistical Analysis
 
-- Due to docked bikes causing ride length outliers, casual riders tends to have longer tails from a statisical stand point and their median ride length flutuates wildly between months, days of the week, and months.
-- During weekdays, annual member's median ride length is statistically the same.
-- Ride length for both members and casuals tends to increase during holiday/vacation season. The fluctuation is more pronouned among casual riders.
-- October is an interesting month where majority of rides were made on electric bikes among both causual and annual members.
-- In August, member rides are virtually non-existent. 
-- Beause of long tails, average ride length is over 10 minutes, but the histogram shows, for both casual and annual members, majority of the rides lie between 6 to 16 minutes.
+![Ride Length by Season and Membership](https://i.imgur.com/L1xpxIq.png)
 
-#### Tableau Visualization
+![Ride Length by Day and Membership](https://i.imgur.com/Y4U3jHY.png)
 
-We choose to use Tableau for the sharing phase as well due to the interactiveness of Tableau visualizations. The process for Tableau is similar to R where we first import the data into the software in the data source tab and join the tables together. Then we play with the data with different visuals until we gind something that is meaningful. The resulting dashboard can be found [here](https://public.tableau.com/app/profile/george.jieh/viz/GoogleDataAnalyticsCase1ConsolidatedVisuals/Dashboard1) with the screenshot of it below:
+![Ride Length by Month and Membership](https://i.imgur.com/5XRviBa.png)
 
-![img](https://i.imgur.com/7TlIjsu.png)
+![Ride Length by Bike Type and Membership](https://i.imgur.com/xEkt6qL.png)
 
-I recommend going to the dashboard link so the interactions can be manipulated. In the Tableau visuals we added a calculated field where we mark holidays and weekends based on the Chicago School District's academic calendar. From this we were able to learn an interesting insight where, with the exception of docked bikes, people tend to ride more oftten during weekdays while they ride longer on holiday and weekends. The time difference for members are negligible but the the time difference for casual is significant. The opposite is true when it comes to ride count. 
+These boxplots reveal:
+- Casual riders have greater variability in ride lengths
+- Both user types ride longer during spring and summer months
+- Annual members' ride durations remain remarkably consistent through weekdays
+- Docked bikes create outliers that skew casual rider statistics
 
-## Act Phase
+### Ride Length Distribution
 
-From our analysis the main target group that is possible to be converted to annual member from casual riders are individuals that ride under the following conditions:
+The histograms show the distribution of ride lengths by different variables:
 
-- People that ride during weekdays and on classic bikes.
-- People that ride during winter and spring on classic bikes.
+![Ride Length Histogram by Month](https://i.imgur.com/LG0U24z.png)
 
-It will be recommended for stakeholders to come up with marketing plans that target these two groups of people. This could include things such as annual membership discounts during winter and spring or targeted annual membership advertising for individuals that have a record of riding on weekdays.
+![Ride Length Histogram by Season](https://i.imgur.com/fZQz64J.png)
 
-There are many more data that could have been useful. One that comes to mind is trip route data. Knowing the exact path each trip took would have give us a better understanding as to why a trip was made. Right now stating that most members ride for commute is just a conjecture based on ride pattern difference during weekends and holidays. With actual path data we can confirm with a higher accuracy regarding the reason behind a specific bike trip.
+![Ride Length Histogram by Day](https://i.imgur.com/6az0410.png)
 
-###### [Back To Home](https://georgejieh.github.io/georges-data-analytics-portfolio/)
+Key observations:
+- Despite long statistical tails, the majority of rides for both user types are between 6-16 minutes
+- October shows a significant increase in electric bike usage
+- August shows unusually low annual member ridership
+- Ride lengths increase during vacation/holiday periods, especially for casual riders
 
+### Tableau Interactive Dashboard
 
+A comprehensive Tableau dashboard was created to provide interactive visualization of the data:
 
+![Tableau Dashboard](https://i.imgur.com/7TlIjsu.png)
 
+The dashboard, available [here](https://public.tableau.com/app/profile/george.jieh/viz/GoogleDataAnalyticsCase1ConsolidatedVisuals/Dashboard1), includes additional insights:
+- Holiday and weekend markers based on the Chicago School District academic calendar
+- Ride frequency versus ride duration analysis
+- Comparative metrics between membership types
 
+A key finding from this visualization is that, excluding docked bikes, people tend to ride more frequently during weekdays but for longer durations on holidays and weekends. This time difference is negligible for members but significant for casual riders.
 
+## Key Insights
 
-<script type="text/javascript" charset="utf-8" 
-src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,
-https://vincenttam.github.io/javascripts/MathJaxLocal.js"></script>
+### 1. Usage Pattern Differences
+
+- **Annual Members**:
+  - Show consistent, predictable usage patterns throughout weekdays
+  - Take shorter rides (average 12-15 minutes)
+  - Never keep bikes for more than 24 hours
+  - Primarily use classic bikes
+  - Consistent riding behavior suggests commuting purposes
+
+- **Casual Riders**:
+  - Show sporadic usage with significant weekend spikes
+  - Take longer rides (average 20-35 minutes, excluding docked bikes)
+  - Occasionally keep bikes for multiple days
+  - Prefer electric bikes but use all bike types
+  - Variable behavior suggests primarily leisure use
+
+### 2. Seasonal and Weather Effects
+
+- All rider types show increased usage during spring and summer
+- Winter shows significant decrease in ridership (Chicago's winter temperatures can reach 27°F)
+- Autumn sees a shift toward electric bikes across both user types
+- Weather appears to be a significant factor in ride length and frequency
+
+### 3. Bike Type Preferences
+
+- Electric bikes consistently result in shorter trip durations, likely due to faster speeds
+- The preference for classic bikes among annual members suggests prioritization of cost efficiency
+- Docked bikes are used exclusively by casual riders and often for much longer durations
+
+### 4. Temporal Patterns
+
+- Weekday riding is remarkably consistent for annual members
+- Friday through Sunday show significant increases in casual ridership
+- Monday shows decreased ridership across both user types
+- Casual riders during Monday-Thursday follow similar patterns to annual members, suggesting potential conversion targets
+
+## Strategic Recommendations
+
+### Target Demographics for Conversion
+
+Based on the analysis, the primary target groups for conversion from casual to annual membership are:
+1. **Weekday Classic Bike Riders**: Casual riders who use classic bikes during weekdays likely have similar usage patterns to existing members
+2. **Winter/Spring Riders**: Those who ride during less favorable weather conditions demonstrate commitment similar to annual members
+
+### Marketing Strategy Recommendations
+
+1. **Seasonal Promotions**:
+   - Offer annual membership discounts during winter and spring
+   - Target the transition seasons with conversion incentives
+   - Develop "fair weather" membership options for those who only ride in better weather
+
+2. **Weekday Focus**:
+   - Implement targeted advertising for individuals with weekday riding patterns
+   - Create weekday-specific membership benefits
+   - Highlight cost savings for regular commuters
+
+3. **Usage Pattern Analysis**:
+   - Develop an algorithm to identify casual riders with member-like usage patterns
+   - Create personalized conversion offers based on individual riding history
+   - Implement a "trial" membership period during peak conversion likelihood
+
+## Limitations and Future Research
+
+### Data Limitations
+
+- The analysis would benefit from trip route data to better understand trip purposes
+- Demographic information would allow for more targeted marketing strategies
+- Absence of precise geographic usage patterns limits location-based insights
+
+### Future Analysis Opportunities
+
+Additional data that would enhance this analysis includes:
+- Trip route data to confirm commuting versus leisure usage
+- Demographic information on riders for better segmentation
+- Weather data correlation with usage patterns
+- Pricing sensitivity analysis
+- Long-term conversion rate tracking
+
+## Technical Implementation Notes
+
+The complete technical implementation including SQL queries, R code, and Tableau workbooks is available in the repository. The methodology emphasizes reproducibility and statistical validity while acknowledging data limitations.
